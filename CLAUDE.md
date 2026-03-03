@@ -26,7 +26,7 @@ IPad-work/
 ├── templates/
 │   └── theory_paper.tex.jinja  # LaTeX Jinja2 template
 ├── configs/                    # Paper specification JSONs
-│   └── brunnermeier_moral_hazard.json
+│   └── moral_hazard_policy.json
 └── papers/                     # Generated .tex output (gitignored except examples)
 ```
 
@@ -45,7 +45,7 @@ IPad-work/
 pip install -e ".[dev]"
 
 # Generate a paper from a config
-python -m withoutloss generate configs/brunnermeier_moral_hazard.json
+python -m withoutloss generate configs/moral_hazard_policy.json
 
 # Use a specific model
 python -m withoutloss generate configs/my_paper.json --model claude-opus-4-6
