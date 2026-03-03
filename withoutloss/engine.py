@@ -1,7 +1,7 @@
 """
 Core generation engine.
 
-Orchestrates multi-step paper generation:
+Orchestrates multi-step paper generation from a source paper + critique:
   1. Generate the paper body (sections, proofs, theorems).
   2. Generate abstract + metadata from the body.
   3. Generate title from the abstract.
@@ -18,7 +18,7 @@ from jinja2 import Environment, FileSystemLoader
 from .prompts import (
     SYSTEM_PROMPT,
     build_abstract_prompt,
-    build_paper_prompt,
+    build_critique_paper_prompt,
     build_title_prompt,
 )
 
@@ -65,7 +65,6 @@ def _call_api(
 
 def _parse_json_response(text: str) -> dict:
     """Robustly parse a JSON object from the model response."""
-    # Try direct parse first
     text = text.strip()
     # Strip markdown fences if present
     text = re.sub(r"^```(?:json)?\s*", "", text)
@@ -73,34 +72,66 @@ def _parse_json_response(text: str) -> dict:
     return json.loads(text)
 
 
+def read_input_file(path: Path) -> str:
+    """Read a paper or critique file.
+
+    Supports .txt, .tex, and .md files as plain text.
+    For .pdf files, attempts extraction via pdfminer.
+    """
+    path = Path(path)
+    if not path.exists():
+        raise FileNotFoundError(f"Input file not found: {path}")
+
+    if path.suffix.lower() == ".pdf":
+        try:
+            from pdfminer.high_level import extract_text
+
+            return extract_text(str(path))
+        except ImportError as exc:
+            raise RuntimeError(
+                "Reading PDFs requires pdfminer.six. Install with: "
+                "pip install pdfminer.six"
+            ) from exc
+
+    return path.read_text(encoding="utf-8")
+
+
 # ---------------------------------------------------------------------------
 # Pipeline steps
 # ---------------------------------------------------------------------------
 
 
-def generate_body(config: dict, *, model: str | None = None) -> str:
-    """Step 1: Generate the paper body (sections + proofs)."""
-    prompt = build_paper_prompt(config)
-    print("[1/4] Generating paper body...")
+def generate_body(
+    paper_text: str,
+    critique_text: str,
+    *,
+    model: str | None = None,
+    page_target: int = 6,
+    additional_instructions: str = "",
+) -> str:
+    """Step 1: Generate the paper body from paper + critique."""
+    prompt = build_critique_paper_prompt(
+        paper_text,
+        critique_text,
+        page_target=page_target,
+        additional_instructions=additional_instructions,
+    )
+    print("[1/4] Generating paper body from critique...")
     body = _call_api(SYSTEM_PROMPT, prompt, model=model, max_tokens=12000)
     return body
 
 
-def generate_metadata(
-    body: str, config: dict, *, model: str | None = None
-) -> dict:
+def generate_metadata(body: str, *, model: str | None = None) -> dict:
     """Step 2: Generate abstract, keywords, JEL codes from the body."""
-    prompt = build_abstract_prompt(body, config)
+    prompt = build_abstract_prompt(body)
     print("[2/4] Generating abstract and metadata...")
     raw = _call_api(SYSTEM_PROMPT, prompt, model=model, max_tokens=1000)
     return _parse_json_response(raw)
 
 
-def generate_title(
-    abstract: str, config: dict, *, model: str | None = None
-) -> str:
+def generate_title(abstract: str, *, model: str | None = None) -> str:
     """Step 3: Generate the paper title."""
-    prompt = build_title_prompt(abstract, config)
+    prompt = build_title_prompt(abstract)
     print("[3/4] Generating title...")
     title = _call_api(
         SYSTEM_PROMPT, prompt, model=model, max_tokens=100, temperature=0.2
@@ -123,7 +154,6 @@ def assemble_latex(
     print("[4/4] Assembling LaTeX document...")
     env = Environment(
         loader=FileSystemLoader(str(TEMPLATE_DIR)),
-        # Keep LaTeX braces from being interpreted
         block_start_string="<%",
         block_end_string="%>",
         variable_start_string="{{",
@@ -149,38 +179,59 @@ def assemble_latex(
 
 
 def generate_paper(
-    config: dict,
+    paper_path: Path,
+    critique_path: Path,
     *,
     model: str | None = None,
     output_name: str | None = None,
+    page_target: int = 6,
+    additional_instructions: str = "",
 ) -> Path:
     """Run the full paper-generation pipeline.
 
     Parameters
     ----------
-    config : dict
-        Paper specification (see prompts.build_paper_prompt for schema).
+    paper_path : Path
+        Path to the original paper file (.txt, .tex, .md, or .pdf).
+    critique_path : Path
+        Path to the critique file (.txt, .tex, .md, or .pdf).
     model : str, optional
         Anthropic model ID to use.
     output_name : str, optional
         Base name for the output .tex file (without extension).
+    page_target : int
+        Target page count for the output.
+    additional_instructions : str
+        Extra guidance for the model.
 
     Returns
     -------
     Path
         Path to the generated .tex file.
     """
+    # Read inputs
+    print(f"Reading paper: {paper_path}")
+    paper_text = read_input_file(paper_path)
+    print(f"Reading critique: {critique_path}")
+    critique_text = read_input_file(critique_path)
+
     # Step 1: body
-    body = generate_body(config, model=model)
+    body = generate_body(
+        paper_text,
+        critique_text,
+        model=model,
+        page_target=page_target,
+        additional_instructions=additional_instructions,
+    )
 
     # Step 2: metadata
-    meta = generate_metadata(body, config, model=model)
+    meta = generate_metadata(body, model=model)
     abstract = meta["abstract"]
     keywords = meta.get("keywords", "")
     jel_codes = meta.get("jel_codes", "")
 
     # Step 3: title
-    title = generate_title(abstract, config, model=model)
+    title = generate_title(abstract, model=model)
 
     # Step 4: assemble
     latex = assemble_latex(

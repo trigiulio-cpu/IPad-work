@@ -71,67 +71,89 @@ Use \E for expectation, \R for reals, \Prob for probability.
 """
 
 
-def build_paper_prompt(config: dict) -> str:
-    """Build the user-turn prompt that instructs the model to write the paper.
+def build_critique_paper_prompt(
+    paper_text: str,
+    critique_text: str,
+    *,
+    page_target: int = 6,
+    additional_instructions: str = "",
+) -> str:
+    """Build the prompt for the critique-based paper generation workflow.
+
+    The model receives:
+      1. The original paper text.
+      2. The user's critique of that paper.
+
+    It must then produce a short, formal theory paper that:
+      - Checks the logical soundness of every argument in the critique.
+      - Formalises informal claims into propositions with proofs.
+      - Improves exposition and adds structure.
+      - Corrects the critique where it is wrong.
 
     Parameters
     ----------
-    config : dict
-        Paper configuration. Required keys:
-            - topic: str
-            - research_question: str
-            - conjecture: str
-            - model_primitives: str
-        Optional keys:
-            - source_paper: str  (paper being built upon)
-            - microfoundation: str  (specific micro-foundation to start from)
-            - policies: str  (policies to analyse)
-            - additional_instructions: str
-            - page_target: int (default 6)
+    paper_text : str
+        Full text of the original paper being critiqued.
+    critique_text : str
+        The user's critique / notes on the paper.
+    page_target : int
+        Target page count for the output paper.
+    additional_instructions : str
+        Any extra guidance from the user.
     """
-    page_target = config.get("page_target", 6)
-
     sections = [
-        f"Write a short, self-contained theory paper in LaTeX (~{page_target} "
-        f"pages of body content).",
+        f"You are given an original paper and a critique of that paper.",
+        f"Your task: write a short, self-contained theory paper in LaTeX "
+        f"(~{page_target} pages of body content) that formalises the critique "
+        f"into a rigorous contribution.",
         "",
-        f"## Topic\n{config['topic']}",
+        "## Your Responsibilities",
+        "1. **Logical audit** — For every argument in the critique, check "
+        "whether it is logically sound. If an argument is flawed, state "
+        "why and provide the correct result.",
+        "2. **Formalisation** — Convert informal claims into formal "
+        "propositions, lemmas, or theorems with proofs or proof sketches.",
+        "3. **Model construction** — If the critique implies a model "
+        "different from the original paper, build that model explicitly "
+        "(primitives, agents, constraints, information, timing).",
+        "4. **Exposition** — Write clear, precise prose connecting the "
+        "formal results. No fluff, no hand-waving.",
+        "5. **Honesty** — If the critique is wrong on a point, say so "
+        "and prove the correct claim. If the original paper is right "
+        "and the critique is mistaken, acknowledge it.",
         "",
-        f"## Research Question\n{config['research_question']}",
+        "## Original Paper",
+        "--- BEGIN PAPER ---",
+        paper_text,
+        "--- END PAPER ---",
         "",
-        f"## Central Conjecture\n{config['conjecture']}",
-        "",
-        f"## Model Primitives\n{config['model_primitives']}",
+        "## Critique",
+        "--- BEGIN CRITIQUE ---",
+        critique_text,
+        "--- END CRITIQUE ---",
     ]
 
-    if config.get("source_paper"):
-        sections += ["", f"## Source Paper\n{config['source_paper']}"]
-
-    if config.get("microfoundation"):
-        sections += ["", f"## Micro-foundation\n{config['microfoundation']}"]
-
-    if config.get("policies"):
-        sections += ["", f"## Policies to Analyse\n{config['policies']}"]
-
-    if config.get("additional_instructions"):
+    if additional_instructions:
         sections += [
             "",
-            f"## Additional Instructions\n{config['additional_instructions']}",
+            f"## Additional Instructions",
+            additional_instructions,
         ]
 
     sections += [
         "",
         "## Structure Requirements",
-        "The paper MUST contain, in order:",
-        "1. \\section{Introduction} — state the question, the result, and why it matters. No fluff.",
-        "2. \\section{Model} — full environment: primitives, agents, constraints, "
-        "information, timing.",
-        "3. \\section{Equilibrium} — define equilibrium formally, establish existence "
-        "where possible.",
-        "4. \\section{Policy Analysis} — introduce each policy instrument, derive its "
-        "effect via propositions with proofs.",
-        "5. \\section{Discussion} — interpret results, state limitations honestly.",
-        "6. (Optional) \\appendix with longer proofs if needed.",
+        "The output paper MUST contain, in order:",
+        "1. \\section{Introduction} — state what the original paper claims, "
+        "what the critique argues, and what this paper establishes. No fluff.",
+        "2. \\section{Model} — the formal environment. If the critique uses "
+        "the same model as the original paper, restate it precisely. If the "
+        "critique modifies it, define the modified model.",
+        "3. \\section{Analysis} — formal propositions with proofs addressing "
+        "each point of the critique. Organise by claim.",
+        "4. \\section{Discussion} — summarise which parts of the critique "
+        "survive, which fail, and what the net conclusion is.",
+        "5. (Optional) \\appendix with longer proofs if needed.",
         "",
         "## Formatting Rules",
         "- Output ONLY the LaTeX body (sections, theorems, proofs). "
@@ -139,14 +161,14 @@ def build_paper_prompt(config: dict) -> str:
         "- Every proposition must have a proof or proof sketch.",
         "- Every variable must be defined before use.",
         "- Label all assumptions with the assumption environment.",
-        "- Be skeptical of your own conjecture: if it is wrong, say so and prove "
-        "the correct result instead.",
+        "- Do NOT fabricate citations. If you are unsure a reference exists, "
+        "omit it.",
     ]
 
     return "\n".join(sections)
 
 
-def build_abstract_prompt(body: str, config: dict) -> str:
+def build_abstract_prompt(body: str) -> str:
     """Build a prompt that asks the model to write the abstract + metadata.
 
     Called after the body is generated so the abstract faithfully summarises
@@ -163,7 +185,7 @@ def build_abstract_prompt(body: str, config: dict) -> str:
     )
 
 
-def build_title_prompt(abstract: str, config: dict) -> str:
+def build_title_prompt(abstract: str) -> str:
     """Build a prompt to generate a concise title."""
     return (
         "Given the following abstract, produce a single paper title.\n"

@@ -5,10 +5,10 @@
 **Repo:** `trigiulio-cpu/IPad-work`
 **Project:** Without Loss — an automated economic theory paper generator.
 
-This tool uses the Anthropic API to generate short (5-7 page), self-contained
-theory papers in LaTeX at the level of top-5 economics journals. Papers are
-driven by JSON config files that specify the topic, research question,
-conjecture, and model primitives.
+You provide a paper and your critique. The tool reads both, checks the
+logical soundness of every argument in the critique, formalises informal
+claims into propositions with proofs, improves exposition, and outputs
+a short (5-7 page) self-contained theory paper in LaTeX.
 
 ## Project Structure
 
@@ -25,8 +25,7 @@ IPad-work/
 │   └── prompts.py              # System prompt + prompt builders
 ├── templates/
 │   └── theory_paper.tex.jinja  # LaTeX Jinja2 template
-├── configs/                    # Paper specification JSONs (add your own)
-└── papers/                     # Generated .tex output (gitignored except examples)
+└── papers/                     # Generated .tex output
 ```
 
 ## Tech Stack
@@ -34,6 +33,7 @@ IPad-work/
 - **Language:** Python 3.11+
 - **API:** Anthropic (claude-sonnet-4-6 default, configurable)
 - **Templating:** Jinja2 for LaTeX assembly
+- **PDF reading:** pdfminer.six (optional, for PDF inputs)
 - **Output:** LaTeX (.tex files)
 - **Linter:** ruff
 
@@ -43,47 +43,47 @@ IPad-work/
 # Install dependencies
 pip install -e ".[dev]"
 
-# Generate a paper from a config
-python -m withoutloss generate configs/my_paper.json
+# Install PDF support (if your inputs are PDFs)
+pip install -e ".[pdf]"
+
+# Generate a paper from a source paper + critique
+python -m withoutloss generate --paper paper.pdf --critique my_notes.txt
 
 # Use a specific model
-python -m withoutloss generate configs/my_paper.json --model claude-opus-4-6
+python -m withoutloss generate --paper paper.pdf --critique notes.txt --model claude-opus-4-6
 
-# Validate config without generating
-python -m withoutloss validate configs/my_paper.json
+# Set page target and add extra instructions
+python -m withoutloss generate --paper paper.tex --critique notes.txt --pages 7 --instructions "Focus on the welfare result"
+
+# Set output filename
+python -m withoutloss generate --paper paper.pdf --critique notes.txt --output my_response
 
 # Lint
 ruff check withoutloss/
 
 # Compile generated LaTeX (requires texlive or similar)
-pdflatex papers/my_paper.tex
+pdflatex papers/my_response.tex
 ```
 
 ## How the Pipeline Works
 
-1. **Body generation** — The model writes LaTeX sections/theorems/proofs
-   guided by the "Without Loss" system prompt and the paper config.
-2. **Metadata generation** — A second call produces abstract, keywords,
+1. **Read inputs** — Read the source paper and critique files
+   (.txt, .tex, .md as plain text; .pdf via pdfminer).
+2. **Body generation** — The model receives both texts and writes
+   LaTeX sections/theorems/proofs that formalise the critique.
+   It audits every argument for logical soundness.
+3. **Metadata generation** — A second call produces abstract, keywords,
    and JEL codes from the generated body.
-3. **Title generation** — A third call produces a concise title from the
-   abstract.
-4. **Assembly** — Jinja2 renders the full LaTeX document from the template.
+4. **Title generation** — A third call produces a concise title.
+5. **Assembly** — Jinja2 renders the full LaTeX document from the template.
 
-## Paper Config Schema
+## Workflow
 
-JSON files in `configs/` must contain:
-
-| Key                    | Required | Description                                    |
-|------------------------|----------|------------------------------------------------|
-| `topic`                | Yes      | Subject area of the paper                      |
-| `research_question`    | Yes      | The precise question being investigated        |
-| `conjecture`           | Yes      | The central claim to prove or disprove         |
-| `model_primitives`     | Yes      | Agents, technology, information, timing        |
-| `source_paper`         | No       | Paper being built upon                         |
-| `microfoundation`      | No       | Specific micro-foundation to start from        |
-| `policies`             | No       | Policy instruments to analyse                  |
-| `additional_instructions` | No    | Extra guidance for the model                   |
-| `page_target`          | No       | Target page count (default: 6)                 |
+1. Place your source paper file somewhere accessible (PDF, .tex, or .txt).
+2. Write your critique in a text file — informal is fine; the tool formalises it.
+3. Run `python -m withoutloss generate --paper <paper> --critique <critique>`.
+4. The output `.tex` file appears in `papers/`.
+5. Compile with `pdflatex` to get a PDF.
 
 ## The "Without Loss" Persona
 
@@ -117,7 +117,5 @@ The system prompt encodes a persona with these rules:
 3. **No speculative features** — implement what is asked
 4. **Prompts are content** — treat `prompts.py` as carefully as model code;
    small wording changes can significantly affect output quality
-5. **Config files are user-facing** — keep the JSON schema stable; add
-   optional keys rather than changing required ones
-6. **Never commit API keys** — `ANTHROPIC_API_KEY` must stay in environment
-7. **Update this CLAUDE.md** when adding significant structure or tooling
+5. **Never commit API keys** — `ANTHROPIC_API_KEY` must stay in environment
+6. **Update this CLAUDE.md** when adding significant structure or tooling

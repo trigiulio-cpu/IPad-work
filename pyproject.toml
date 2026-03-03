@@ -13,6 +13,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+pdf = [
+    "pdfminer.six>=20221105",
+]
 dev = [
     "pytest>=7.0",
     "ruff>=0.4",
