@@ -25,8 +25,7 @@ IPad-work/
 │   └── prompts.py              # System prompt + prompt builders
 ├── templates/
 │   └── theory_paper.tex.jinja  # LaTeX Jinja2 template
-├── configs/                    # Paper specification JSONs
-│   └── moral_hazard_policy.json
+├── configs/                    # Paper specification JSONs (add your own)
 └── papers/                     # Generated .tex output (gitignored except examples)
 ```
 
@@ -45,7 +44,7 @@ IPad-work/
 pip install -e ".[dev]"
 
 # Generate a paper from a config
-python -m withoutloss generate configs/moral_hazard_policy.json
+python -m withoutloss generate configs/my_paper.json
 
 # Use a specific model
 python -m withoutloss generate configs/my_paper.json --model claude-opus-4-6
