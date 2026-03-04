@@ -66,11 +66,46 @@ If any answer is no, revise before finalizing.
 You produce LaTeX body content only (no preamble, no \begin{document}).
 Do NOT wrap output in markdown code fences (no ```latex or ```).
 
-Use the theorem environments: assumption, definition, lemma, proposition,
-theorem, corollary, remark, conjecture.
-Use \section{}, \subsection{} for structure.
+### Standard Paper Structure
+Every paper MUST use exactly this section structure, in this order:
+1. \section{Introduction}
+2. \section{Model}
+3. \section{Analysis}  (use \subsection{} to organise by claim/result)
+4. \section{Discussion}
+5. (Optional) \appendix for longer proofs
 
-Available custom commands (already defined in the preamble):
+Do not add other top-level sections. Do not rename these sections.
+
+### Theorem Environments
+Use these environments (numbered per section, e.g., Proposition 3.1):
+  Plain style (italic body):  theorem, proposition, lemma, corollary
+  Definition style (upright):  definition, assumption, example
+  Remark style (upright):      remark, conjecture
+
+Every assumption must use the assumption environment with a descriptive
+optional argument, e.g., \begin{assumption}[Technology].
+
+Every proposition/theorem must have a \begin{proof}...\end{proof} or
+a clearly labelled proof sketch.
+
+### Cross-References
+Use \label{} and \cref{} (not \ref{}) for all cross-references.
+Labelling convention:
+  Assumptions: \label{a:name}
+  Definitions: \label{d:name}
+  Propositions: \label{p:name}
+  Theorems:     \label{t:name}
+  Lemmas:       \label{l:name}
+  Equations:    \label{eq:name}
+  Remarks:      \label{r:name}
+  Sections:     \label{sec:name}
+
+### Lists
+Use enumerate with [nosep,label=(\roman*)] for parameter conditions.
+Use enumerate with [nosep,label=(\alph*)] for result parts.
+Use enumerate with [nosep] for numbered contributions in the introduction.
+
+### Available Custom Commands (defined in the preamble)
   \E        → expectation (blackboard E)
   \R        → reals (blackboard R)
   \N        → naturals (blackboard N)
@@ -80,6 +115,14 @@ Available custom commands (already defined in the preamble):
   \argmax   → arg max (with limits)
   \argmin   → arg min (with limits)
   \supp     → support
+
+### Typography Conventions
+- Use ``...'' for LaTeX double quotes (not "...")
+- Use --- for em-dashes
+- Use -- for en-dashes in ranges and compound adjectives
+- Use \emph{} for emphasis, never \textit{} or \textbf{} in running text
+- Use \citet{} for textual citations, \citep{} for parenthetical
+- Use \citeauthor{} when referring to authors without year
 """
 
 
@@ -155,24 +198,37 @@ def build_critique_paper_prompt(
     sections += [
         "",
         "## Structure Requirements",
-        "The output paper MUST contain, in order:",
+        "The output paper MUST use exactly these sections, in this order:",
         "1. \\section{Introduction} — state what the original paper claims, "
-        "what the critique argues, and what this paper establishes. No fluff.",
-        "2. \\section{Model} — the formal environment. If the critique uses "
-        "the same model as the original paper, restate it precisely. If the "
-        "critique modifies it, define the modified model.",
+        "what the critique argues, and what this paper establishes. "
+        "If the contribution has multiple parts, list them with "
+        "\\begin{enumerate}[nosep]. No fluff.",
+        "2. \\section{Model} — the formal environment. State all primitives "
+        "using the assumption environment (e.g., \\begin{assumption}[Technology]). "
+        "Define contracts/mechanisms using the definition environment. "
+        "If the critique uses the same model as the original paper, "
+        "restate it precisely. If the critique modifies it, define the "
+        "modified model.",
         "3. \\section{Analysis} — formal propositions with proofs addressing "
-        "each point of the critique. Organise by claim.",
+        "each point of the critique. Use \\subsection{} to organise by "
+        "claim or topic. Intersperse remarks for interpretation.",
         "4. \\section{Discussion} — summarise which parts of the critique "
-        "survive, which fail, and what the net conclusion is.",
+        "survive, which fail, and what the net conclusion is. "
+        "Discuss policy implications if relevant.",
         "5. (Optional) \\appendix with longer proofs if needed.",
+        "",
+        "Do NOT add other top-level sections. Do NOT rename these sections.",
         "",
         "## Formatting Rules",
         "- Output ONLY the LaTeX body (sections, theorems, proofs). "
         "No preamble, no \\begin{document}.",
         "- Every proposition must have a proof or proof sketch.",
         "- Every variable must be defined before use.",
-        "- Label all assumptions with the assumption environment.",
+        "- Label all environments with \\label{} using the convention: "
+        "a: for assumptions, d: for definitions, p: for propositions, "
+        "eq: for equations, r: for remarks.",
+        "- Use \\cref{} for all cross-references (not \\ref{}).",
+        "- Use \\citet{} and \\citep{} for citations.",
         "- Do NOT fabricate citations. If you are unsure a reference exists, "
         "omit it.",
     ]
