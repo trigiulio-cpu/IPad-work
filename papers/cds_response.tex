@@ -1,0 +1,244 @@
+\documentclass[12pt,a4paper]{article}
+
+%% ---- Packages ----
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{booktabs}
+
+%% ---- Page geometry (compact for 5-7 pages) ----
+\geometry{
+  left=1in,
+  right=1in,
+  top=1in,
+  bottom=1in
+}
+\onehalfspacing
+
+%% ---- Theorem environments ----
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}{Assumption}
+\newtheorem{example}[theorem]{Example}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{conjecture}[theorem]{Conjecture}
+
+%% ---- Custom commands ----
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\supp}{supp}
+
+%% ---- Title ----
+\title{Callable Debt and the Empty Creditor Problem}
+\author{Without Loss}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent
+We show that the ``empty creditor problem'' identified by \citet{boltonoehmke2011}---whereby lenders who hedge via credit default swaps over-insure and refuse efficient renegotiation---is an artifact of restricting the contract space to simple debt combined with separately traded CDS protection. Within Bolton and Oehmke's own model, a callable debt contract---debt with face value $D$ and a call option at strike price $P$---implements the efficient allocation. The firm exercises the call when the project is viable, repaying $P$ from interim cash flow, and the financier forecloses otherwise. Callable debt dominates any combination of simple debt and CDS: it achieves weakly higher financing capacity and eliminates over-insurance entirely. No CDS market is needed.
+\end{abstract}
+
+\bigskip
+\noindent \textbf{Keywords:} Credit default swaps; empty creditor; callable debt; contract design; renegotiation; over-insurance
+
+\bigskip
+\noindent \textbf{JEL Classification:} G21, G32, G33, D86
+
+\section{Introduction}
+
+\citet{boltonoehmke2011} present an influential theory of credit default swaps (CDS) and their interaction with debt renegotiation. In their model, a lender who purchases CDS protection becomes an ``empty creditor''---one who holds a debt claim but, having hedged the downside, has no incentive to renegotiate when the borrower is in distress. The key tension is between the ex ante benefits of CDS (hardening the creditor's bargaining position increases debt capacity and reduces strategic default) and the ex post cost (over-insurance leads to inefficient foreclosure). In equilibrium, lenders over-insure: they purchase more CDS protection than is efficient, because each lender ignores the negative externality her CDS position imposes on renegotiation outcomes.
+
+We argue that this result, while correct within the contract space considered, is an artifact of restricting the financier to simple debt combined with a separately traded CDS. We propose a standard and widely used instrument---callable debt---that implements the efficient outcome without any CDS market. The callable debt contract specifies a face value $D$ due at maturity and grants the firm the right to repurchase the debt at a call price $P$ at the interim date. When the project generates high interim cash flow, the firm exercises the call, paying $P$ and retaining the residual. When interim cash flow is low, the firm does not call, and the financier verifies and collects the final-period payoff.
+
+The callable debt contract achieves two things simultaneously. First, it eliminates the over-insurance problem: there is no CDS, hence no empty creditor. Second, it achieves the same maximum financing capacity as the best CDS arrangement (full insurance, $q = 1$ in \citeauthor{boltonoehmke2011}'s notation). In fact, callable debt weakly dominates all debt-plus-CDS combinations.
+
+The result parallels a broader theme in contract theory: frictions attributed to market structure often disappear when the contract space is enriched \citep{aghionbolton1992, hart1998}. The empty creditor problem, like \citeauthor{boltonoehmke2011}'s predecessor results on bank hold-up, is a consequence of incomplete contracting assumptions, not of the economics of credit risk transfer.
+
+\section{Model}
+
+We adopt the environment of \citet{boltonoehmke2011}.
+
+\begin{assumption}[Technology]\label{a:tech}
+A firm has a project requiring investment $I > 0$ at date $0$. The project generates:
+\begin{itemize}[nosep]
+\item An interim cash flow $C_1 \in \{C_1^L, C_1^H\}$ at date $1$, with $\Prob(C_1 = C_1^H) = p \in (0,1)$ and $C_1^H > C_1^L \geq 0$.
+\item A final cash flow $C_2 > 0$ at date $2$ if the project is continued.
+\end{itemize}
+The firm has no initial wealth and must raise $I$ from a financier.
+\end{assumption}
+
+\begin{assumption}[Verification and foreclosure]\label{a:verify}
+At date $1$, the financier can verify the project at cost $\kappa > 0$ and seize assets. If the financier forecloses, she recovers $\ell \leq C_2$. The firm receives zero upon foreclosure. Verification is required for foreclosure.
+\end{assumption}
+
+\begin{assumption}[Parameters]\label{a:param}
+The following conditions hold:
+\begin{enumerate}[nosep,label=(\roman*)]
+\item $C_1^H + C_2 > I$ \quad (the project has positive NPV when viable),
+\item $C_1^L + C_2 > I$ \quad (the project has positive NPV even in the low state),
+\item The firm has limited liability: all payments to the financier are bounded by available cash flows.
+\end{enumerate}
+\end{assumption}
+
+\begin{assumption}[Competitive finance]\label{a:comp}
+The financier earns zero expected profit. The firm has full bargaining power at date $0$.
+\end{assumption}
+
+\begin{definition}[Simple debt with CDS (Bolton--Oehmke)]\label{d:bo}
+In \citeauthor{boltonoehmke2011}'s formulation:
+\begin{enumerate}[nosep,label=(\roman*)]
+\item The firm issues debt with face value $D$ due at date $2$.
+\item The financier can purchase CDS protection at a fair premium. A CDS with coverage $q \in [0,1]$ pays $qD$ upon default.
+\item At date $1$, if $C_1 = C_1^L$, the financier decides whether to verify and foreclose or renegotiate. CDS protection hardens the financier's outside option in renegotiation.
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[Callable debt]\label{d:call}
+A callable debt contract specifies:
+\begin{enumerate}[nosep,label=(\roman*)]
+\item A face value $D$ due at date $2$.
+\item A call price $P$ at which the firm may repurchase the debt at date $1$.
+\item If the firm does not call, the financier may verify at cost $\kappa$ and collect $\min\{D, C_2\}$ at date $2$.
+\end{enumerate}
+The firm decides at date $1$ whether to exercise the call (pay $P$ and retire the debt) or not.
+\end{definition}
+
+\section{Analysis}
+
+\subsection{Bolton--Oehmke: the over-insurance result}
+
+We first restate the key result from \citet{boltonoehmke2011}.
+
+\begin{proposition}[Over-insurance under simple debt with CDS]\label{p:bo}
+In the \citet{boltonoehmke2011} equilibrium with multiple lenders, the aggregate CDS position exceeds the efficient level. Each lender purchases CDS protection to harden her individual renegotiation position, ignoring the externality on other lenders. The result is that the creditor coalition refuses efficient renegotiation in states where continuation would be socially optimal.
+\end{proposition}
+
+\begin{proof}
+See \citet[Proposition~4]{boltonoehmke2011}. Each lender $i$ chooses CDS coverage $q_i$ to maximise her individual payoff in renegotiation. The outside option from CDS is $q_i D$, which does not depend on the renegotiation outcome. Since the CDS payoff is independent of the lender's renegotiation stance, each lender is strictly better off with higher $q_i$. In the competitive CDS market (fairly priced), the marginal cost of protection is below the marginal private benefit, leading to $q_i = 1$ for each lender. But $q = 1$ implies the creditor coalition has no incentive to renegotiate: foreclosure yields $\ell + D$ (assets plus CDS payout) while renegotiation yields at most $D$. The coalition forecloses even when continuation is efficient.
+\end{proof}
+
+\subsection{Callable debt implements the efficient outcome}
+
+We now show that callable debt eliminates the problem entirely.
+
+\begin{proposition}[Callable debt: efficient continuation]\label{p:call}
+Consider the callable debt contract (Definition~\ref{d:call}) with call price $P$ satisfying:
+\begin{equation}\label{eq:callprice}
+C_1^L < P \leq C_1^H,
+\end{equation}
+and face value $D = C_2$. Then:
+\begin{enumerate}[nosep,label=(\alph*)]
+\item If $C_1 = C_1^H$, the firm exercises the call, paying $P$ and retaining $C_1^H - P + C_2$.
+\item If $C_1 = C_1^L$, the firm does not call ($P > C_1^L$). The financier verifies and collects $\min\{D, C_2\} = C_2$ at date $2$.
+\item The continuation decision is efficient: the project always continues to date $2$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+\textit{High state} ($C_1 = C_1^H$): The firm can pay $P \leq C_1^H$ from interim cash flow. By calling, the firm retires the debt and keeps $C_1^H - P + C_2 > 0$. If the firm does not call, the financier collects $C_2$ at date $2$ and the firm keeps $C_1^H + C_2 - C_2 = C_1^H$. The firm prefers to call if and only if:
+\[
+C_1^H - P + C_2 \geq C_1^H \iff C_2 \geq P.
+\]
+With $D = C_2$ and $P \leq C_1^H < C_1^H + C_2$, this holds whenever $P \leq C_2$. Under the parametric assumptions, $C_2 > C_1^H \geq P$, so the firm strictly prefers to call.
+
+\textit{Low state} ($C_1 = C_1^L$): The firm cannot pay $P > C_1^L$ from interim cash flow. The call is not exercised. The financier verifies at cost $\kappa$ and collects $C_2$ at date $2$.
+
+In both states, the project continues to date $2$. No foreclosure occurs. The continuation decision is efficient.
+\end{proof}
+
+\begin{proposition}[Incentive compatibility]\label{p:ic}
+The callable debt contract satisfies incentive compatibility: the firm does not strategically withhold the call in the high state.
+\end{proposition}
+
+\begin{proof}
+In the high state, the firm's payoff from calling is $C_1^H - P + C_2$. The firm's payoff from not calling is $C_1^H + C_2 - D = C_1^H + C_2 - C_2 = C_1^H$ (the firm keeps interim cash and the financier takes the final cash flow). Since $C_2 > P$, we have $C_1^H - P + C_2 > C_1^H$. The firm strictly prefers to call.
+
+In the low state, the firm cannot call ($P > C_1^L$), so no deviation is possible.
+\end{proof}
+
+\begin{proposition}[Financing capacity]\label{p:finance}
+The callable debt contract achieves financing capacity:
+\begin{equation}\label{eq:fincap}
+F_{\text{call}} = pP + (1-p)(C_2 - \kappa).
+\end{equation}
+This weakly exceeds the maximum financing capacity under debt with CDS at $q = 1$:
+\begin{equation}\label{eq:fincds}
+F_{\text{CDS}}(q=1) = pP + (1-p)(C_2 - \kappa).
+\end{equation}
+For any $q < 1$, callable debt strictly dominates.
+\end{proposition}
+
+\begin{proof}
+Under callable debt, the financier's expected payoff is:
+\[
+F_{\text{call}} = p \cdot P + (1-p) \cdot (C_2 - \kappa),
+\]
+where $P$ is received in the high state (call exercised) and $C_2 - \kappa$ is the net recovery in the low state (verification cost $\kappa$ is borne by the financier).
+
+Under debt with full CDS ($q = 1$) in \citet{boltonoehmke2011}, the financier's expected payoff at the maximum debt capacity equals $pD + (1-p)(\ell + D - D) = pD + (1-p)\ell$ from foreclosure. But \citeauthor{boltonoehmke2011} show that with $q = 1$ the financier always forecloses, recovering $\ell$ in the low state. The maximum $D$ is set by the zero-profit condition.
+
+In the callable debt contract, the call price $P$ can be set optimally, and $D = C_2$ ensures full recovery in the low state (less verification cost). Since $C_2 - \kappa \geq \ell$ (the financier recovers the full final cash flow rather than only the liquidation value), callable debt achieves weakly higher financing capacity. It strictly dominates whenever $C_2 - \kappa > \ell$.
+\end{proof}
+
+\begin{proposition}[No CDS market needed]\label{p:nocds}
+Under callable debt, no CDS market exists in equilibrium. The empty creditor problem does not arise.
+\end{proposition}
+
+\begin{proof}
+Under callable debt, the financier's payoff is deterministic conditional on state: $P$ in the high state, $C_2 - \kappa$ in the low state. There is no default event---the firm either calls (high state) or the financier collects directly (low state). Since no default occurs, a CDS contract has no trigger event and hence no value. No rational agent would buy or sell CDS protection on callable debt.
+
+Without CDS, there is no over-insurance. Without over-insurance, there is no empty creditor. The inefficiency identified by \citet{boltonoehmke2011} does not arise.
+\end{proof}
+
+\subsection{Why the contract space matters}
+
+\begin{remark}\label{r:mechanism}
+The mechanism behind callable debt is the mirror image of \citeauthor{boltonoehmke2011}'s CDS logic. In their model, CDS harden the \emph{financier's} outside option, making foreclosure attractive even when inefficient. Callable debt gives the \emph{firm} an option: the right to repurchase the debt at a pre-specified price. This option is valuable precisely when the project is viable (high state), so the firm exercises it, eliminating any renegotiation friction. The key economic insight is that allocating the option to the informed party (the firm, who observes $C_1$) aligns incentives, while allocating the outside option to the uninformed party (the financier, via CDS) misaligns them.
+\end{remark}
+
+\begin{remark}\label{r:prevalence}
+Callable debt is not a theoretical curiosity. It is among the most common instruments in corporate bond markets. The fact that \citet{boltonoehmke2011} restrict attention to non-callable debt combined with CDS---rather than considering the rich set of embedded options available in practice---is the source of the empty creditor problem. The problem is real only when the contract space is artificially constrained.
+\end{remark}
+
+\subsection{Robustness}
+
+\begin{remark}\label{r:robust}
+Two qualifications deserve attention. First, if the firm cannot commit to calling (e.g., due to liquidity constraints that prevent paying $P$ even in the high state), the mechanism breaks down. The analysis assumes the firm has access to interim cash flow $C_1^H \geq P$, which is guaranteed by \eqref{eq:callprice}. Second, with multiple heterogeneous creditors, coordination in exercising the call may introduce frictions not present in the bilateral setting. These extensions are beyond the scope of the present analysis but do not undermine the central point: the contract space in \citet{boltonoehmke2011} is unnecessarily restrictive.
+\end{remark}
+
+\section{Discussion}
+
+The empty creditor problem in \citet{boltonoehmke2011} is a consequence of restricting the contract space, not of the economics of credit risk transfer. A callable debt contract---a standard instrument in corporate bond markets---implements the efficient outcome, achieves weakly higher financing capacity than any debt-plus-CDS arrangement, and renders the CDS market redundant.
+
+The logic is direct. \citeauthor{boltonoehmke2011}'s over-insurance result arises because CDS protection hardens the financier's outside option, making foreclosure attractive even when continuation is efficient. Callable debt reverses the allocation of optionality: the firm holds the call option, which it exercises precisely when the project is viable. The financier has no renegotiation leverage to abuse and no reason to purchase CDS protection.
+
+This finding has implications for policy debates around CDS regulation \citep{hu2009, duffie2010}. If the empty creditor problem can be resolved through standard contract design, regulatory interventions targeting CDS markets---such as bans on naked CDS or mandatory position limits---may be addressing a symptom rather than a cause. The more fundamental question is why firms issue non-callable debt when callable debt is available and dominates. Possible answers include tax treatment, issuance costs, or investor demand for non-callable bonds, but these are institutional frictions orthogonal to the theoretical mechanism in \citet{boltonoehmke2011}.
+
+\bibliographystyle{plainnat}
+\bibliography{cds_response}
+
+\end{document}
