@@ -59,7 +59,7 @@
 
 \begin{abstract}
 \noindent
-We examine the claim that the ``natural cost of banking'' identified by Rajan (1992)---whereby an informed lender's ability to hold up the borrower at the interim stage distorts project continuation---is an artifact of restricting the contract space to plain vanilla debt. We show that within Rajan's own model, a debt contract augmented with a liquidation covenant that assigns unconditional control rights to the bank implements the second-best allocation when monitoring is costless. The covenant is renegotiation-proof: neither party can credibly threaten to deviate. With positive monitoring costs, the choice between informed and arm's-length finance is governed by a threshold on project quality. We establish that the threshold is unique, characterise its comparative statics, and show that the driving force is monitoring cost, not interim rent extraction.
+We show that the ``natural cost of banking'' identified by \citet{rajan1992}---whereby an informed lender's ability to hold up the borrower at the interim stage distorts project continuation---is an artifact of restricting the contract space to plain vanilla debt. Within Rajan's own model, a debt contract augmented with a liquidation covenant that assigns unconditional control rights to the bank implements the second-best allocation when monitoring is costless. The covenant is renegotiation-proof: neither party can credibly threaten to deviate. With positive monitoring costs, the choice between informed and arm's-length finance is governed by a unique threshold on project quality. The driving force behind the bank--bond margin is monitoring cost, not interim rent extraction.
 \end{abstract}
 
 \bigskip
@@ -70,23 +70,21 @@ We examine the claim that the ``natural cost of banking'' identified by Rajan (1
 
 \section{Introduction}
 
-Rajan (1992) establishes an influential theory of the choice between informed (bank) and arm's-length (bond market) debt. In that model, a bank that monitors the borrower learns the project's interim type and can threaten early liquidation to extract rents. This rent extraction distorts the continuation decision relative to the social optimum, creating a ``natural cost of banking'' that exists even when monitoring itself is costless. The borrower trades off this cost against the benefit of monitoring---the bank's ability to liquidate bad projects---and the equilibrium contract form is standard short-term debt that is rolled over.
+\citet{rajan1992} establishes an influential theory of the choice between informed (bank) and arm's-length (bond market) debt. In that model, a bank that monitors the borrower learns the project's interim type and can threaten early liquidation to extract rents. This rent extraction distorts the continuation decision relative to the social optimum, creating a ``natural cost of banking'' that exists even when monitoring itself is costless. The borrower trades off this cost against the benefit of monitoring---the bank's ability to liquidate bad projects---and the equilibrium contract form is standard short-term debt that is rolled over.
 
-The critique by Bernhardt, Koufopoulos, and Trigilia argues that this result is driven not by the economics of informed lending but by Rajan's restriction to plain vanilla debt instruments. They propose that a debt contract with a liquidation covenant---granting the bank unconditional authority to liquidate at the interim date---eliminates the hold-up problem entirely when monitoring is costless.
+We argue that this result is driven not by the economics of informed lending but by the restriction to plain vanilla debt instruments. A debt contract with a liquidation covenant---granting the bank unconditional authority to liquidate at the interim date---eliminates the hold-up problem entirely when monitoring is costless. The idea draws on the broader literature on control rights in financial contracting \citep{aghionbolton1992} and on the role of banks as monitors \citep{diamond1984, diamond1991}.
 
-This paper formalises and audits every step of that critique. We find the following:
+Our contribution is threefold:
 
 \begin{enumerate}[nosep]
-\item The covenant contract does implement the second-best with zero monitoring cost. The argument is correct and the contract is renegotiation-proof.
-\item With positive monitoring costs, the critique correctly identifies a threshold quality level separating bank and arm's-length finance. The threshold is unique under Rajan's parametric assumptions.
-\item The economic force driving the bank--bond margin shifts from rent extraction to monitoring cost. This is a substantive reinterpretation.
+\item We show that a covenant contract implements the second-best with zero monitoring cost. The contract is renegotiation-proof: the bank's own incentives prevent it from liquidating good projects.
+\item With positive monitoring costs, we characterise a unique threshold quality level $\hat{\alpha}$ separating bank and arm's-length finance. Low-quality firms prefer banks; high-quality firms prefer arm's-length lenders.
+\item The economic force driving the bank--bond margin shifts from rent extraction to monitoring cost. This is a substantive reinterpretation of \citeauthor{rajan1992}'s (\citeyear{rajan1992}) central result.
 \end{enumerate}
-
-We present the model, verify each claim formally, and discuss the implications.
 
 \section{Model}
 
-We adopt the environment of Rajan (1992) as restated in the critique.
+We adopt the environment of \citet{rajan1992}.
 
 \begin{assumption}[Technology]\label{a:tech}
 An entrepreneur has a project requiring investment $I>0$ at date $0$. At date $1$, the project's type $\theta \in \{G, B\}$ is realised with $\Prob(\theta = G) = \alpha \in (0,1)$. A good project ($\theta = G$) yields $X > 0$ at date $2$ if continued and liquidation value $L$ if liquidated at date $1$. A bad project ($\theta = B$) yields $qX$ with $q \in (0,1)$ if continued and $L$ if liquidated.
@@ -116,8 +114,8 @@ An arm's-length debt contract specifies a face value $D_a$ due at date $2$. Sinc
 \]
 \end{definition}
 
-\begin{definition}[Plain vanilla bank debt (Rajan)]\label{d:rajan}
-In Rajan's formulation, the bank offers short-term debt with face value $D_s$ due at date $1$. If $\theta = G$, the bank rolls over into long-term debt with face value $D_\ell$. If $\theta = B$, the bank liquidates and receives $L$. The bank observes $\theta$ after monitoring.
+\begin{definition}[Plain vanilla bank debt]\label{d:rajan}
+In \citeauthor{rajan1992}'s formulation, the bank offers short-term debt with face value $D_s$ due at date $1$. If $\theta = G$, the bank rolls over into long-term debt with face value $D_\ell$. If $\theta = B$, the bank liquidates and receives $L$. The bank observes $\theta$ after monitoring.
 \end{definition}
 
 \begin{definition}[Covenant bank debt]\label{d:cov}
@@ -141,13 +139,15 @@ With $c=0$, the second-best requires: continue if $\theta = G$, liquidate if $\t
 
 Under Assumption~\ref{a:param}, the second-best strictly dominates both unconditional continuation and unconditional liquidation.
 
-\begin{proposition}[Rajan's result under plain vanilla debt]\label{p:rajan}
-Under Definition~\ref{d:rajan}, the informed bank extracts a rent in the good state. Specifically, in any renegotiation of the short-term debt when $\theta = G$, the bank obtains $D_\ell > D_s$ by threatening to call the loan. The entrepreneur's expected payoff falls below the second-best surplus.
+\begin{proposition}[Rent extraction under plain vanilla debt]\label{p:rajan}
+Under Definition~\ref{d:rajan}, the informed bank extracts a rent in the good state. In any renegotiation of the short-term debt when $\theta = G$, the bank obtains $D_\ell > D_s$ by threatening to call the loan. The entrepreneur's expected payoff falls strictly below the second-best surplus $S^*$.
 \end{proposition}
 
 \begin{proof}
-When $\theta = G$, the project's continuation value is $X > L$. The bank holds short-term debt $D_s$ due immediately. If the bank calls the loan, the project is liquidated and the bank receives $L$. If the bank rolls over, it receives $D_\ell$ at date $2$. In bilateral renegotiation with the bank having the threat point $L$, the bank can demand $D_\ell$ satisfying $D_\ell \geq L$. Since $D_s$ was set to break even across both states, the rollover terms $D_\ell > D_s$ extract surplus from the entrepreneur in the good state. The entrepreneur's expected payoff is $\alpha(X - D_\ell) + (1-\alpha) \cdot 0 < S^*$ whenever $D_\ell > I - (1-\alpha)L)/\alpha$, which holds under the zero-profit condition.
+When $\theta = G$, the project's continuation value is $X > L$. The bank holds short-term debt $D_s$ due immediately. If the bank calls the loan, the project is liquidated and the bank receives $L$. If the bank rolls over, it receives $D_\ell$ at date $2$. In bilateral renegotiation with the bank having the threat point $L$, the bank demands $D_\ell \geq L$. Since $D_s$ was set to break even across both states, the rollover terms $D_\ell > D_s$ extract surplus from the entrepreneur in the good state. The entrepreneur's expected payoff is $\alpha(X - D_\ell) < S^*$ whenever $D_\ell > (I - (1-\alpha)L)/\alpha$, which holds under the zero-profit condition. This is the ``natural cost of banking'' in \citet{rajan1992}.
 \end{proof}
+
+We now show this cost is an artifact of the contract space.
 
 \begin{proposition}[Covenant contract implements the second-best]\label{p:cov}
 Consider the covenant contract (Definition~\ref{d:cov}) with $c = 0$ and face value $D_b$ satisfying the bank's zero-profit condition:
@@ -156,8 +156,8 @@ Consider the covenant contract (Definition~\ref{d:cov}) with $c = 0$ and face va
 \end{equation}
 Under Assumptions~\ref{a:tech}--\ref{a:comp}:
 \begin{enumerate}[nosep,label=(\alph*)]
-\item If $\theta = G$, the bank waives the covenant. The bank receives $D_b$ at date $2$.
-\item If $\theta = B$, the bank exercises the covenant. The bank receives $L$.
+\item If $\theta = G$, the bank waives the covenant and receives $D_b$ at date $2$.
+\item If $\theta = B$, the bank exercises the covenant and receives $L$.
 \item The entrepreneur's expected payoff equals the second-best surplus: $\E[U_E] = S^*$.
 \end{enumerate}
 \end{proposition}
@@ -173,7 +173,6 @@ The entrepreneur's expected payoff is:
 \[
 \E[U_E] = \alpha(X - D_b) = \alpha X - I + (1-\alpha)L = S^*.
 \]
-This equals the second-best surplus.
 \end{proof}
 
 \begin{proposition}[Renegotiation-proofness]\label{p:reneg}
@@ -185,13 +184,13 @@ Renegotiation requires both parties to strictly prefer an alternative action.
 
 \textit{Good state}: The bank waives (receives $D_b > L$). To induce the bank to exercise instead, the entrepreneur would need to offer the bank more than $D_b$, which is impossible since exercise yields only $L < D_b$. Neither party wishes to renegotiate.
 
-\textit{Bad state}: The bank exercises (receives $L$). For the entrepreneur to induce waiver, she must offer the bank at least $L$ from continuation payoff. But the continuation payoff to the project is only $qX < L$. Even if the entrepreneur offered the entire continuation value to the bank, it would not suffice. Renegotiation to waiver is infeasible.
+\textit{Bad state}: The bank exercises (receives $L$). For the entrepreneur to induce waiver, she must offer the bank at least $L$ from the continuation payoff. But the continuation payoff to the project is only $qX < L$. Even if the entrepreneur offered the entire continuation value to the bank, it would not suffice. Renegotiation to waiver is infeasible.
 
 Since in both states the bank's equilibrium action is sequentially rational and no mutually beneficial deviation exists, the contract is renegotiation-proof.
 \end{proof}
 
 \begin{remark}\label{r:key}
-The critical difference from Rajan's plain vanilla debt is the direction of the threat. Under short-term debt, the bank threatens to liquidate a \emph{good} project, extracting rent. Under the covenant, the bank's authority to liquidate is unconditional, but exercising it in the good state is suboptimal \emph{for the bank itself}. The bank's incentives are aligned with efficiency because $D_b > L$.
+The critical difference from \citeauthor{rajan1992}'s plain vanilla debt is the direction of the threat. Under short-term debt, the bank threatens to liquidate a \emph{good} project, extracting rent. Under the covenant, the bank's authority to liquidate is unconditional, but exercising it in the good state is suboptimal \emph{for the bank itself}. The bank's incentives are aligned with efficiency because $D_b > L$. This is an instance of the broader principle that allocating control rights to the informed party can resolve hold-up problems \citep{aghionbolton1992}.
 \end{remark}
 
 \subsection{Positive monitoring cost: the bank--bond margin}
@@ -250,37 +249,26 @@ Immediate from \eqref{eq:ahat}: $\partial \hat{\alpha}/\partial c = -1/(L-qX) < 
 \end{proof}
 
 \begin{remark}\label{r:reinterpretation}
-In Rajan (1992), the bank--bond margin is driven by the trade-off between monitoring benefits and rent extraction. Under the covenant contract, rent extraction is eliminated (Propositions~\ref{p:cov}--\ref{p:reneg}), and the margin is driven entirely by the trade-off between monitoring cost $c$ and the loss from inefficient continuation of bad projects $(1-\alpha)(L - qX)$. Low-quality firms (low $\alpha$) have many bad projects, making monitoring worthwhile despite its cost. High-quality firms (high $\alpha$) have few bad projects, making the monitoring cost not worth bearing.
+In \citet{rajan1992}, the bank--bond margin is driven by the trade-off between monitoring benefits and rent extraction. Under the covenant contract, rent extraction is eliminated (Propositions~\ref{p:cov}--\ref{p:reneg}), and the margin is driven entirely by the trade-off between monitoring cost $c$ and the loss from inefficient continuation of bad projects $(1-\alpha)(L - qX)$. Low-quality firms (low $\alpha$) have many bad projects, making monitoring worthwhile despite its cost. High-quality firms (high $\alpha$) have few bad projects, making the monitoring cost not worth bearing. The same qualitative prediction---low-quality firms borrow from banks---obtains as in \citet{rajan1992} and \citet{diamond1991}, but the underlying mechanism is different.
 \end{remark}
 
-\subsection{Logical audit of the critique}
-
-\begin{proposition}[Validity of the critique's main claims]\label{p:audit}
-The following claims from the critique are logically sound:
-\begin{enumerate}[nosep,label=(\alph*)]
-\item Rajan's ``natural cost of banking'' is driven by the restriction to plain vanilla debt, not by the economics of informed lending per se.
-\item A covenant contract eliminates rent extraction and implements the second-best with $c = 0$.
-\item The covenant contract is renegotiation-proof under bilateral bargaining.
-\item With $c > 0$, the bank--bond margin is determined by a unique quality threshold $\hat{\alpha}$ driven by monitoring cost.
-\end{enumerate}
-\end{proposition}
-
-\begin{proof}
-Claims (b)--(d) are established in Propositions~\ref{p:cov}, \ref{p:reneg}, and \ref{p:thresh} above. Claim (a) follows by contradiction: if the cost of banking were intrinsic to informed lending, it would persist under any contract form. But the covenant eliminates it, so the cost is an artifact of the contract restriction.
-\end{proof}
+\subsection{Robustness}
 
 \begin{remark}\label{r:caveat}
-Two qualifications are in order. First, the covenant contract requires that the bank can commit to a long-term relationship (debt maturing at date $2$). If institutional constraints force short-term contracting, Rajan's result re-emerges. Second, the analysis maintains Rajan's assumption that the bank observes $\theta$ perfectly. With noisy monitoring, the covenant may induce excessive liquidation, partially restoring inefficiency. These extensions are beyond the scope of the present analysis.
+Two qualifications are in order. First, the covenant contract requires that the bank can commit to a long-term claim (debt maturing at date $2$). If institutional constraints force short-term contracting, \citeauthor{rajan1992}'s result re-emerges. Second, the analysis maintains the assumption that the bank observes $\theta$ perfectly. With noisy monitoring, the covenant may induce excessive liquidation, partially restoring inefficiency. These extensions merit further investigation.
 \end{remark}
 
 \section{Discussion}
 
-The critique of Rajan (1992) survives formal scrutiny. The central mechanism is clean: by granting the bank unconditional liquidation authority via a covenant, the contract aligns the bank's incentives with the efficient continuation decision. The bank liquidates when it is efficient to do so (bad state) and continues when it is efficient to do so (good state), not because of external enforcement, but because $D_b > L$ makes continuation strictly more profitable for the bank in the good state.
+The ``natural cost of banking'' in \citet{rajan1992}---the central friction motivating the choice between informed and arm's-length debt---vanishes when the contract space is enriched to include covenants. The mechanism is straightforward: by granting the bank unconditional liquidation authority via a covenant, the contract aligns the bank's incentives with the efficient continuation decision. The bank liquidates when it is efficient to do so (bad state) and continues when it is efficient to do so (good state), not because of external enforcement, but because $D_b > L$ makes continuation strictly more profitable for the bank in the good state.
 
-The key insight is that the direction of the threat matters. Under Rajan's short-term debt, the bank threatens the entrepreneur. Under the covenant, the bank's liquidation right is a commitment device that disciplines its own behaviour. The result is that the ``natural cost of banking''---the central friction in Rajan (1992)---vanishes when the contract space is enriched to include covenants.
+The key insight is that the direction of the threat matters. Under \citeauthor{rajan1992}'s short-term debt, the bank threatens the entrepreneur. Under the covenant, the bank's liquidation right is a commitment device that disciplines its own behaviour. The restriction to plain vanilla debt is therefore not innocuous---it generates a cost that is attributed to informed lending per se but is in fact an artifact of the contract form.
 
 With positive monitoring costs, the bank--bond margin persists but with a different economic interpretation. The margin is no longer about rent extraction versus monitoring benefits. It is about whether the monitoring cost $c$ is justified by the efficiency gain from liquidating bad projects. The threshold $\hat{\alpha} = 1 - c/(L - qX)$ has a transparent interpretation: bank finance is preferred precisely when the expected loss from inefficiently continuing bad projects, $(1-\alpha)(L - qX)$, exceeds the cost of avoiding that loss, $c$.
 
-This reinterpretation has implications beyond the specific model. If the cost of informed lending is monitoring cost rather than rent extraction, then policies that reduce monitoring costs (e.g., improved information technology, standardised reporting) expand the scope of bank finance, while policies that regulate bank bargaining power at the interim stage are addressing a friction that the market can resolve through contract design.
+This reinterpretation matters for policy. If the cost of informed lending is monitoring cost rather than rent extraction, then policies that reduce monitoring costs---improved information technology, standardised reporting, relationship lending infrastructure \citep{bolton2016, holmstromtirole1997}---expand the scope of bank finance. Policies that regulate bank bargaining power at the interim stage, by contrast, address a friction that the market can already resolve through contract design.
+
+\bibliographystyle{plainnat}
+\bibliography{insideout_response}
 
 \end{document}

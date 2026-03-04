@@ -71,4 +71,9 @@
 
 {{ appendix }}
 
+{% if bibliography -%}
+\bibliographystyle{plainnat}
+\bibliography{ {{- bibliography -}} }
+{%- endif %}
+
 \end{document}
