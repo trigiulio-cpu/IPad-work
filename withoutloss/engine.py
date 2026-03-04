@@ -11,6 +11,9 @@ Orchestrates multi-step paper generation from a source paper + critique:
 import json
 import os
 import re
+import shutil
+import subprocess
+import time
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
@@ -29,6 +32,22 @@ DEFAULT_MODEL = "claude-sonnet-4-6"
 TEMPLATE_DIR = Path(__file__).resolve().parent.parent / "templates"
 OUTPUT_DIR = Path(__file__).resolve().parent.parent / "papers"
 
+MAX_RETRIES = 5
+RETRY_BACKOFF = 2  # exponential back-off base (seconds)
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+
+def _strip_fences(text: str) -> str:
+    """Strip markdown code fences from model output."""
+    text = text.strip()
+    text = re.sub(r"^```(?:latex|tex|json)?\s*\n?", "", text)
+    text = re.sub(r"\n?```\s*$", "", text)
+    return text.strip()
+
 
 def _call_api(
     system: str,
@@ -40,6 +59,7 @@ def _call_api(
 ) -> str:
     """Call the Anthropic messages API and return the text response.
 
+    Retries transient errors with exponential backoff.
     Requires ANTHROPIC_API_KEY in the environment.
     """
     try:
@@ -53,22 +73,42 @@ def _call_api(
     client = anthropic.Anthropic()  # picks up ANTHROPIC_API_KEY from env
     model = model or os.getenv("WITHOUTLOSS_MODEL", DEFAULT_MODEL)
 
-    response = client.messages.create(
-        model=model,
-        max_tokens=max_tokens,
-        temperature=temperature,
-        system=system,
-        messages=[{"role": "user", "content": user}],
-    )
-    return response.content[0].text
+    for attempt in range(MAX_RETRIES):
+        try:
+            response = client.messages.create(
+                model=model,
+                max_tokens=max_tokens,
+                temperature=temperature,
+                system=system,
+                messages=[{"role": "user", "content": user}],
+            )
+            return response.content[0].text
+        except Exception as exc:
+            # Don't retry auth errors or invalid requests
+            exc_str = str(exc)
+            if "401" in exc_str or "authentication" in exc_str.lower():
+                raise
+            if attempt == MAX_RETRIES - 1:
+                raise
+            wait = min(RETRY_BACKOFF ** (attempt + 1), 60)
+            print(f"  [retry {attempt + 1}/{MAX_RETRIES}] {exc} — waiting {wait}s")
+            time.sleep(wait)
+
+    # Should not reach here, but satisfy type checker
+    raise RuntimeError("API call failed after all retries")
 
 
 def _parse_json_response(text: str) -> dict:
     """Robustly parse a JSON object from the model response."""
-    text = text.strip()
-    # Strip markdown fences if present
-    text = re.sub(r"^```(?:json)?\s*", "", text)
-    text = re.sub(r"\s*```$", "", text)
+    text = _strip_fences(text)
+    # Try to find a JSON object if there's extra text around it
+    start = text.find("{")
+    end = text.rfind("}")
+    if start != -1 and end != -1:
+        try:
+            return json.loads(text[start : end + 1])
+        except json.JSONDecodeError:
+            pass
     return json.loads(text)
 
 
@@ -118,7 +158,7 @@ def generate_body(
     )
     print("[1/4] Generating paper body from critique...")
     body = _call_api(SYSTEM_PROMPT, prompt, model=model, max_tokens=12000)
-    return body
+    return _strip_fences(body)
 
 
 def generate_metadata(body: str, *, model: str | None = None) -> dict:
@@ -126,7 +166,18 @@ def generate_metadata(body: str, *, model: str | None = None) -> dict:
     prompt = build_abstract_prompt(body)
     print("[2/4] Generating abstract and metadata...")
     raw = _call_api(SYSTEM_PROMPT, prompt, model=model, max_tokens=1000)
-    return _parse_json_response(raw)
+    meta = _parse_json_response(raw)
+
+    # Validate required fields with fallbacks
+    if "abstract" not in meta:
+        print("  Warning: model did not return 'abstract' key, using empty string")
+        meta["abstract"] = ""
+    if "keywords" not in meta:
+        meta["keywords"] = ""
+    if "jel_codes" not in meta:
+        meta["jel_codes"] = ""
+
+    return meta
 
 
 def generate_title(abstract: str, *, model: str | None = None) -> str:
@@ -136,7 +187,7 @@ def generate_title(abstract: str, *, model: str | None = None) -> str:
     title = _call_api(
         SYSTEM_PROMPT, prompt, model=model, max_tokens=100, temperature=0.2
     )
-    return title.strip().strip('"').strip("'")
+    return _strip_fences(title).strip('"').strip("'")
 
 
 def assemble_latex(
@@ -148,6 +199,7 @@ def assemble_latex(
     *,
     author: str = "Without Loss",
     appendix: str = "",
+    bibliography: str = "",
     template_name: str = "theory_paper.tex.jinja",
 ) -> str:
     """Step 4: Render the full LaTeX document from the Jinja template."""
@@ -170,7 +222,66 @@ def assemble_latex(
         jel_codes=jel_codes,
         body=body,
         appendix=appendix,
+        bibliography=bibliography,
     )
+
+
+def compile_latex(tex_path: Path) -> Path | None:
+    """Compile a .tex file to PDF using pdflatex + bibtex if available.
+
+    Returns the path to the PDF on success, or None on failure.
+    """
+    pdflatex = shutil.which("pdflatex")
+    if not pdflatex:
+        print("  Warning: pdflatex not found, skipping compilation")
+        return None
+
+    tex_dir = tex_path.parent
+    tex_name = tex_path.stem
+
+    def run_pdflatex():
+        return subprocess.run(
+            [pdflatex, "-interaction=nonstopmode", "-halt-on-error", tex_path.name],
+            cwd=tex_dir,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+
+    try:
+        # First pass
+        result = run_pdflatex()
+        if result.returncode != 0:
+            print(f"  pdflatex failed (pass 1). See {tex_name}.log for details.")
+            return None
+
+        # Run bibtex if a .bib file exists alongside the .tex
+        bib_path = tex_dir / f"{tex_name}.bib"
+        bibtex = shutil.which("bibtex")
+        if bib_path.exists() and bibtex:
+            subprocess.run(
+                [bibtex, tex_name],
+                cwd=tex_dir,
+                capture_output=True,
+                text=True,
+                timeout=60,
+            )
+            # Two more passes for references
+            run_pdflatex()
+            run_pdflatex()
+        else:
+            # Second pass for cross-references
+            run_pdflatex()
+
+        pdf_path = tex_dir / f"{tex_name}.pdf"
+        if pdf_path.exists():
+            return pdf_path
+        print(f"  PDF not produced. See {tex_name}.log for details.")
+        return None
+
+    except subprocess.TimeoutExpired:
+        print("  pdflatex timed out")
+        return None
 
 
 # ---------------------------------------------------------------------------
@@ -186,6 +297,8 @@ def generate_paper(
     output_name: str | None = None,
     page_target: int = 6,
     additional_instructions: str = "",
+    bib_path: Path | None = None,
+    compile: bool = False,
 ) -> Path:
     """Run the full paper-generation pipeline.
 
@@ -203,11 +316,16 @@ def generate_paper(
         Target page count for the output.
     additional_instructions : str
         Extra guidance for the model.
+    bib_path : Path, optional
+        Path to a .bib file to include in the document.
+    compile : bool
+        If True, compile the .tex file to PDF after generation.
 
     Returns
     -------
     Path
-        Path to the generated .tex file.
+        Path to the generated .tex file (or .pdf if compile=True and
+        compilation succeeds).
     """
     # Read inputs
     print(f"Reading paper: {paper_path}")
@@ -233,6 +351,22 @@ def generate_paper(
     # Step 3: title
     title = generate_title(abstract, model=model)
 
+    # Determine output name
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    fname = output_name or _slugify(title)
+
+    # Handle bibliography
+    bibliography = ""
+    if bib_path:
+        bib_path = Path(bib_path)
+        if not bib_path.exists():
+            print(f"  Warning: .bib file not found: {bib_path}")
+        else:
+            # Copy .bib file next to the output .tex
+            dest_bib = OUTPUT_DIR / f"{fname}.bib"
+            shutil.copy2(bib_path, dest_bib)
+            bibliography = fname  # just the base name, no extension
+
     # Step 4: assemble
     latex = assemble_latex(
         title=title,
@@ -240,14 +374,22 @@ def generate_paper(
         keywords=keywords,
         jel_codes=jel_codes,
         body=body,
+        bibliography=bibliography,
     )
 
     # Write output
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    fname = output_name or _slugify(title)
     out_path = OUTPUT_DIR / f"{fname}.tex"
     out_path.write_text(latex, encoding="utf-8")
     print(f"\nPaper written to: {out_path}")
+
+    # Optional compilation
+    if compile:
+        print("Compiling LaTeX to PDF...")
+        pdf_path = compile_latex(out_path)
+        if pdf_path:
+            print(f"PDF written to: {pdf_path}")
+            return pdf_path
+
     return out_path
 
 

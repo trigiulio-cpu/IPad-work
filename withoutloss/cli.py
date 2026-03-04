@@ -5,6 +5,7 @@ Usage:
     python -m withoutloss generate --paper paper.pdf --critique critique.txt
     python -m withoutloss generate --paper paper.pdf --critique critique.txt --model claude-opus-4-6
     python -m withoutloss generate --paper paper.pdf --critique critique.txt --output my_paper --pages 7
+    python -m withoutloss generate --paper paper.pdf --critique critique.txt --bib refs.bib --compile
 """
 
 import argparse
@@ -62,6 +63,18 @@ def main(argv: list[str] | None = None) -> None:
         default="",
         help="Additional instructions for the model (optional)",
     )
+    gen.add_argument(
+        "--bib",
+        type=Path,
+        default=None,
+        help="Path to a .bib file to include for bibliography",
+    )
+    gen.add_argument(
+        "--compile",
+        action="store_true",
+        default=False,
+        help="Compile the .tex output to PDF (requires pdflatex)",
+    )
 
     args = parser.parse_args(argv)
 
@@ -85,5 +98,7 @@ def _cmd_generate(args: argparse.Namespace) -> None:
         output_name=args.output,
         page_target=args.pages,
         additional_instructions=args.instructions,
+        bib_path=args.bib,
+        compile=args.compile,
     )
     print(f"Done. Output: {out}")

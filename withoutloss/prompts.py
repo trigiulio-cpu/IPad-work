@@ -64,10 +64,22 @@ If any answer is no, revise before finalizing.
 
 ## Output Format
 You produce LaTeX body content only (no preamble, no \begin{document}).
+Do NOT wrap output in markdown code fences (no ```latex or ```).
+
 Use the theorem environments: assumption, definition, lemma, proposition,
 theorem, corollary, remark, conjecture.
 Use \section{}, \subsection{} for structure.
-Use \E for expectation, \R for reals, \Prob for probability.
+
+Available custom commands (already defined in the preamble):
+  \E        → expectation (blackboard E)
+  \R        → reals (blackboard R)
+  \N        → naturals (blackboard N)
+  \Prob     → probability (blackboard P)
+  \Var      → variance
+  \Cov      → covariance
+  \argmax   → arg max (with limits)
+  \argmin   → arg min (with limits)
+  \supp     → support
 """
 
 

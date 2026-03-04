@@ -44,8 +44,8 @@
 \newcommand{\Prob}{\mathbb{P}}
 \newcommand{\Var}{\mathrm{Var}}
 \newcommand{\Cov}{\mathrm{Cov}}
-\newcommand{\argmax}{\operatorname{arg\,max}}
-\newcommand{\argmin}{\operatorname{arg\,min}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator{\supp}{supp}
 
 %% ---- Title ----
@@ -71,9 +71,9 @@
 
 {{ appendix }}
 
-{% if bibliography -%}
+<% if bibliography -%>
 \bibliographystyle{plainnat}
 \bibliography{ {{- bibliography -}} }
-{%- endif %}
+<%- endif %>
 
 \end{document}

@@ -25,7 +25,8 @@ IPad-work/
 │   └── prompts.py              # System prompt + prompt builders
 ├── templates/
 │   └── theory_paper.tex.jinja  # LaTeX Jinja2 template
-└── papers/                     # Generated .tex output
+├── inputs/                     # Source papers and critiques
+└── papers/                     # Generated .tex/.pdf output
 ```
 
 ## Tech Stack
@@ -58,11 +59,14 @@ python -m withoutloss generate --paper paper.tex --critique notes.txt --pages 7 
 # Set output filename
 python -m withoutloss generate --paper paper.pdf --critique notes.txt --output my_response
 
+# Include a .bib file for bibliography
+python -m withoutloss generate --paper paper.pdf --critique notes.txt --bib refs.bib
+
+# Generate and compile to PDF in one step (requires pdflatex)
+python -m withoutloss generate --paper paper.pdf --critique notes.txt --compile
+
 # Lint
 ruff check withoutloss/
-
-# Compile generated LaTeX (requires texlive or similar)
-pdflatex papers/my_response.tex
 ```
 
 ## How the Pipeline Works
@@ -76,6 +80,7 @@ pdflatex papers/my_response.tex
    and JEL codes from the generated body.
 4. **Title generation** — A third call produces a concise title.
 5. **Assembly** — Jinja2 renders the full LaTeX document from the template.
+6. **Compilation** (optional, `--compile`) — Runs pdflatex + bibtex to produce a PDF.
 
 ## Workflow
 
