@@ -62,6 +62,29 @@ Before producing output, verify:
 - Are assumptions explicitly listed?
 If any answer is no, revise before finalizing.
 
+### Model Completeness Check (CRITICAL)
+When working from an original paper, you MUST preserve every economically
+substantive feature of the original model. Before writing, inventory:
+- What frictions does the original model contain?
+  (moral hazard, adverse selection, hold-up, externalities, etc.)
+- What are the key trade-offs that drive the results?
+- What incentive constraints bind in equilibrium?
+
+Your rewritten model MUST include ALL of these. If your proposed
+alternative contract/mechanism resolves one friction, you must show it
+does not break down in the presence of the OTHER frictions that the
+original paper models. Dropping a friction silently is a fatal error ---
+it makes the critique vacuous because it attacks a simpler problem than
+the one the original paper solves.
+
+If the original paper has moral hazard, your model must have moral hazard.
+If it has adverse selection, yours must too. If it has both, yours must
+have both. You may add frictions but you may NEVER silently drop one.
+
+When a friction from the original paper is present, explicitly state in
+the Analysis section how your proposed mechanism handles it. If your
+mechanism fails in the presence of that friction, say so honestly.
+
 ## Output Format
 You produce LaTeX body content only (no preamble, no \begin{document}).
 Do NOT wrap output in markdown code fences (no ```latex or ```).
@@ -162,20 +185,49 @@ def build_critique_paper_prompt(
         f"(~{page_target} pages of body content) that formalises the critique "
         f"into a rigorous contribution.",
         "",
+        "## STEP 0: Model Inventory (do this mentally before writing)",
+        "Before writing anything, you MUST identify every economically "
+        "substantive feature of the original paper's model:",
+        "- All frictions (moral hazard, adverse selection, hold-up, "
+        "externalities, commitment problems, etc.)",
+        "- All agents and their objectives",
+        "- All incentive constraints that bind in equilibrium",
+        "- All information structures (who knows what, when)",
+        "- The key trade-offs that drive the paper's results",
+        "",
+        "Your model section MUST preserve ALL of these features. If the "
+        "original paper has moral hazard, your model must have moral hazard. "
+        "If it has adverse selection, yours must too. You may NEVER silently "
+        "drop a friction — doing so makes the critique vacuous because it "
+        "attacks a simpler problem than the one the original paper solves.",
+        "",
+        "If your proposed mechanism resolves one friction, you must "
+        "explicitly show it survives the OTHER frictions present in the "
+        "original model. If it does not survive, state this honestly.",
+        "",
         "## Your Responsibilities",
-        "1. **Logical audit** — For every argument in the critique, check "
-        "whether it is logically sound. If an argument is flawed, state "
-        "why and provide the correct result.",
-        "2. **Formalisation** — Convert informal claims into formal "
+        "1. **Model completeness** — Preserve every friction and incentive "
+        "constraint from the original paper. In the Model section, explicitly "
+        "flag which features come from the original paper and which are "
+        "new. If you modify the contract space, keep everything else fixed.",
+        "2. **Logical audit** — For every argument in the critique, check "
+        "whether it is logically sound IN THE FULL MODEL (with all original "
+        "frictions present). If an argument only works in a simplified "
+        "version that drops frictions, say so.",
+        "3. **Formalisation** — Convert informal claims into formal "
         "propositions, lemmas, or theorems with proofs or proof sketches.",
-        "3. **Model construction** — If the critique implies a model "
-        "different from the original paper, build that model explicitly "
-        "(primitives, agents, constraints, information, timing).",
-        "4. **Exposition** — Write clear, precise prose connecting the "
+        "4. **Robustness to original frictions** — For each proposed "
+        "mechanism or contract, verify it is incentive-compatible in the "
+        "presence of ALL frictions from the original model. If the original "
+        "has moral hazard, show your mechanism doesn't break incentive "
+        "compatibility. If it has adverse selection, show it survives "
+        "strategic type misreporting.",
+        "5. **Exposition** — Write clear, precise prose connecting the "
         "formal results. No fluff, no hand-waving.",
-        "5. **Honesty** — If the critique is wrong on a point, say so "
+        "6. **Honesty** — If the critique is wrong on a point, say so "
         "and prove the correct claim. If the original paper is right "
-        "and the critique is mistaken, acknowledge it.",
+        "and the critique is mistaken, acknowledge it. If your mechanism "
+        "fails in the full model, acknowledge that too.",
         "",
         "## Original Paper",
         "--- BEGIN PAPER ---",
@@ -203,15 +255,22 @@ def build_critique_paper_prompt(
         "what the critique argues, and what this paper establishes. "
         "If the contribution has multiple parts, list them with "
         "\\begin{enumerate}[nosep]. No fluff.",
-        "2. \\section{Model} — the formal environment. State all primitives "
-        "using the assumption environment (e.g., \\begin{assumption}[Technology]). "
-        "Define contracts/mechanisms using the definition environment. "
-        "If the critique uses the same model as the original paper, "
-        "restate it precisely. If the critique modifies it, define the "
-        "modified model.",
+        "2. \\section{Model} — the formal environment. This section must "
+        "include EVERY feature of the original paper's model: all agents, "
+        "all frictions (moral hazard, adverse selection, etc.), all "
+        "incentive constraints, all information structures. State all "
+        "primitives using the assumption environment "
+        "(e.g., \\begin{assumption}[Technology], \\begin{assumption}[Moral hazard]). "
+        "Define the original paper's contract/mechanism using one definition "
+        "environment, then define your proposed alternative using another. "
+        "The ONLY difference between the two should be the contract space — "
+        "everything else (agents, frictions, information, timing) must be "
+        "identical.",
         "3. \\section{Analysis} — formal propositions with proofs addressing "
         "each point of the critique. Use \\subsection{} to organise by "
-        "claim or topic. Intersperse remarks for interpretation.",
+        "claim or topic. For each result, verify incentive compatibility "
+        "in the presence of ALL frictions from the original model. "
+        "Intersperse remarks for interpretation.",
         "4. \\section{Discussion} — summarise which parts of the critique "
         "survive, which fail, and what the net conclusion is. "
         "Discuss policy implications if relevant.",
