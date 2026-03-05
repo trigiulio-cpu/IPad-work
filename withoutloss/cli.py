@@ -8,6 +8,8 @@ Usage:
     python -m withoutloss generate --paper paper.pdf --critique critique.txt --bib refs.bib --compile
 """
 
+from __future__ import annotations
+
 import argparse
 import sys
 from pathlib import Path

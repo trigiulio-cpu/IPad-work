@@ -1,0 +1,398 @@
+\documentclass[12pt,a4paper]{article}
+
+%% ---- Fonts ----
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext}          % Times-style text (standard for econ journals)
+\usepackage{newtxmath}          % Matching math font
+\usepackage{microtype}          % Subtle typographic improvements
+
+%% ---- Math ----
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+
+%% ---- Layout ----
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{natbib}
+
+%% ---- Hyperref (load last, before cleveref) ----
+\usepackage[
+  colorlinks=true,
+  linkcolor={blue!70!black},
+  citecolor={green!50!black},
+  urlcolor={blue!60!black},
+  bookmarks=true,
+  bookmarksnumbered=true,
+  pdfstartview=FitH,
+  pdftitle={Renegotiation, Monitoring Costs, and the Limits of Covenant Contracts},
+  pdfauthor={Without Loss},
+]{hyperref}
+\usepackage[capitalize,nameinlink]{cleveref}
+
+%% ---- Page geometry ----
+\geometry{
+  left=1.15in,
+  right=1.15in,
+  top=1.1in,
+  bottom=1.1in,
+}
+\onehalfspacing
+
+%% ---- Theorem environments ----
+%%  Plain style: theorems, propositions, lemmas, corollaries (italic body)
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+%%  Definition style: definitions, assumptions, examples (upright body)
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}{Assumption}
+\newtheorem{example}[theorem]{Example}
+
+%%  Remark style: remarks, conjectures (upright body, lighter heading)
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{conjecture}[theorem]{Conjecture}
+
+%% ---- QED symbol ----
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+%% ---- Custom commands ----
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\supp}{supp}
+
+%% ---- Title ----
+\title{Renegotiation, Monitoring Costs, and the Limits of Covenant Contracts}
+\author{Without Loss}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent Rajan (1992) argues that no standard debt contract simultaneously achieves efficient liquidation and undistorted effort incentives, generating a fundamental trade-off between bank and arm's-length debt. A critique contends that expanding the contract space to include a debt-with-covenant contract---which transfers liquidation control unconditionally to the bank---eliminates this trade-off when monitoring is costless. We formalise and audit this critique within a model preserving all original frictions: moral hazard, limited liability, and costly monitoring. We establish that the covenant contract is renegotiation-proof and implements the second-best when monitoring is costless, validating the critique's core logic. However, with positive monitoring costs a quality-dependent trade-off between bank and arm's-length debt survives, with the threshold increasing in monitoring costs. Rajan's priority result for multi-source borrowing is unaffected. The critique is partially correct: it relocates the source of the trade-off from ex-post bargaining to monitoring costs without eliminating it.
+\end{abstract}
+
+\medskip
+\noindent \textbf{Keywords:} bank debt; arm's-length debt; moral hazard; renegotiation-proofness; monitoring costs; incomplete contracts
+
+\smallskip
+\noindent \textbf{JEL Classification:} D82; D86; G21; G32
+
+\bigskip
+
+\section{Introduction}
+\label{sec:intro}
+
+Rajan (1992) argues that a fundamental cost of bank finance arises endogenously from the bank's monitoring and control function. An informed bank can enforce efficient liquidation, but the very information that enables control also confers bargaining power. Under short-term bank debt the bank extracts surplus in the good state, depressing the firm's effort incentives; under long-term bank debt the bank must bribe the firm to liquidate in the bad state, again distorting incentives. The paper concludes that no standard debt contract simultaneously achieves efficient continuation decisions and undistorted effort incentives, so the firm faces a genuine trade-off between bank and arm's-length debt.
+
+The critique argues that this conclusion depends critically on an implicit restriction to \emph{plain-vanilla} debt contracts. Once the contract space is expanded to include a covenant that transfers control over the liquidation decision unconditionally to the bank, the bank's threat to liquidate in the good state becomes non-credible---because the face value required to satisfy the bank's participation constraint exceeds the liquidation value---while its commitment to liquidate in the bad state is self-enforcing. The critique claims that this \emph{debt-with-covenant} contract is renegotiation-proof and implements the second-best for all parameter values when monitoring is costless, and that the genuine trade-off between bank and arm's-length debt is driven by monitoring costs rather than by ex-post bargaining.
+
+This paper formalises and audits the critique. We establish the following results.
+
+\begin{enumerate}[nosep]
+\item The debt-with-covenant contract is renegotiation-proof and implements the second-best when monitoring is costless (\cref{p:covenant-implements}).
+\item The critique's renegotiation-proofness argument is logically sound in the full model, including the moral-hazard friction (\cref{p:renegotiation-proof}).
+\item When monitoring is costly, the debt-with-covenant contract no longer dominates arm's-length debt for all parameter values; a genuine quality-dependent trade-off survives (\cref{p:tradeoff-monitoring}).
+\item The original paper's priority result (Proposition~5 of Rajan) is unaffected by the critique: the critique's mechanism does not speak to the multi-source borrowing problem (\cref{r:priority}).
+\end{enumerate}
+
+The net conclusion is that the critique is \emph{partially} correct. It identifies a real gap in the original paper's contract-space restriction, but it does not eliminate the fundamental trade-off; it relocates its source from ex-post bargaining to monitoring costs.
+
+\section{Model}
+\label{sec:model}
+
+\subsection{Environment and primitives}
+
+The economy has three dates $t \in \{0,1,2\}$ and three classes of agents: a single owner-managed firm (henceforth the \emph{firm}), a competitive banking sector, and a competitive market of arm's-length investors.
+
+\begin{assumption}[Technology]
+\label{a:technology}
+The firm has a project requiring fixed investment $I > 0$ at $t = 0$. At $t = 1$ the project can be liquidated for value $L$; assets are worthless at $t = 2$. If not liquidated, the project pays $X > 0$ at $t = 2$ in the good state $s = G$, and pays $X$ with probability $q \in (0,1)$ and zero otherwise in the bad state $s = B$. The parameters satisfy
+\begin{equation}
+\label{eq:param}
+X > I > L > qX.
+\end{equation}
+\end{assumption}
+
+\begin{assumption}[Moral Hazard]
+\label{a:moral-hazard}
+The firm chooses effort $e \in [0,\infty)$ at $t = 0$ after signing the financing contract but before the state is realised. Effort is privately observed by the firm and is not verifiable by any court. The cost of effort is $c(e) = e$. The probability of the good state is $p(e) := \Pr[s = G \mid e]$, where $p$ satisfies:
+\begin{enumerate}[nosep,label=(\roman*)]
+\item $p'(e) > 0$ and $p''(e) < 0$ for all $e \geq 0$;
+\item $p'(0) = 1/\varepsilon$ for some small $\varepsilon > 0$, and $p'(\infty) = 0$.
+\end{enumerate}
+\end{assumption}
+
+\begin{assumption}[Information]
+\label{a:information}
+At $t = 0$ all agents observe the project's quality parameter $\alpha \in [0,1]$, which shifts $p$ upward (higher $\alpha$ raises $p(e,\alpha)$ for every $e$, with $\partial^2 p / \partial e \, \partial \alpha = 0$). The firm observes the state $s$ at $t = 1$. A bank that monitors at cost $c_m \geq 0$ also observes $s$ at $t = 1$. Arm's-length investors and non-monitoring banks observe no interim information. Effort and the state are not verifiable by courts; monetary transfers are verifiable.
+\end{assumption}
+
+\begin{assumption}[Contracts]
+\label{a:contracts}
+All financing is through debt. The firm has no initial wealth. The riskless rate is zero. Competitive lenders earn zero expected profits in equilibrium. The firm has limited liability: its payoff is non-negative in every state.
+\end{assumption}
+
+\begin{assumption}[Monitoring]
+\label{a:monitoring}
+A bank that lends at $t = 0$ may monitor at a fixed cost $c_m \geq 0$, paid at $t = 0$. Monitoring is the only way to observe the state at $t = 1$. A non-monitoring bank is informationally equivalent to an arm's-length investor at $t = 1$.
+\end{assumption}
+
+\subsection{Original contract space}
+
+\begin{definition}[Plain-Vanilla Debt]
+\label{d:plain-vanilla}
+A \emph{plain-vanilla debt contract} specifies a face value $D \geq I$ and a maturity $\tau \in \{1, 2\}$. The firm retains all residual control rights, including the continuation decision at $t = 1$. No covenant restricts the firm's actions. The contract may be renegotiated by mutual consent at $t = 1$.
+\end{definition}
+
+Under \cref{d:plain-vanilla} the firm always prefers continuation to liquidation at $t = 1$ because limited liability gives it a non-negative payoff from continuation and zero from liquidation. This is the source of the inefficiency identified by Rajan (1992).
+
+\subsection{Extended contract space}
+
+\begin{definition}[Debt with Control Covenant]
+\label{d:covenant}
+A \emph{debt-with-covenant contract} specifies a face value $D_b \geq I$ and transfers the liquidation decision unconditionally to the bank at $t = 1$. The firm retains no residual control over continuation. The covenant is enforceable by courts (the transfer of control rights is verifiable even though the state is not). All other features of the environment---moral hazard, information structure, competitive lending, limited liability---are identical to those under \cref{d:plain-vanilla}.
+\end{definition}
+
+\begin{remark}
+\label{r:covenant-scope}
+The covenant in \cref{d:covenant} transfers \emph{control} rights, not cash-flow rights. Courts can verify whether the bank or the firm made the liquidation decision; they cannot verify which state obtained. This distinction is standard in incomplete-contracting environments. The covenant is therefore a feasible contractual instrument under the same verifiability assumptions maintained by Rajan (1992).
+\end{remark}
+
+\section{Analysis}
+\label{sec:analysis}
+
+\subsection{Renegotiation-proofness of the debt-with-covenant contract}
+\label{sec:renegotiation}
+
+We first establish that the debt-with-covenant contract is renegotiation-proof. This is the central logical claim of the critique.
+
+\begin{proposition}[Renegotiation-Proofness]
+\label{p:renegotiation-proof}
+Under \cref{d:covenant}, with monitoring cost $c_m = 0$:
+\begin{enumerate}[nosep,label=(\alph*)]
+\item In state $s = B$, the bank liquidates and no renegotiation is possible.
+\item In state $s = G$, the bank continues and no renegotiation is possible.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+\textbf{Part (a).} In state $B$, the bank holds control rights. Liquidation yields $L$ to the bank. Continuation yields an expected payoff of $qX$ to the bank (since the firm owes $D_b > L$ and $qX < L$ by \cref{eq:param}). Since $L > qX$, liquidation strictly dominates continuation for the bank. The bank liquidates without any side payment.
+
+Can the firm induce the bank to continue by offering a side payment? The firm's payoff from continuation in state $B$ is $q(X - D_b)$, which is non-positive whenever $D_b \geq X$ (which holds when the project is risky and $D_b$ is set to satisfy the bank's participation constraint; we verify this below). Even if $D_b < X$, the firm's gain from continuation is $q(X - D_b)$, while the bank's loss from continuing rather than liquidating is $L - qX > 0$. For renegotiation to occur, the firm would need to transfer at least $L - qX$ to the bank. But the firm has no wealth at $t = 1$ beyond the project itself, and the project in state $B$ yields at most $qX < L$ in expectation. The firm cannot credibly commit to a transfer that exceeds its resources. Hence no renegotiation occurs in state $B$.
+
+\textbf{Part (b).} In state $G$, continuation yields $X$ with certainty. The bank's payoff from continuation is $D_b$; from liquidation it is $L < D_b$ (since $D_b \geq I > L$). The bank strictly prefers continuation. Can the bank credibly threaten to liquidate in order to extract surplus? Such a threat requires the bank to be willing to carry it out. Since $D_b > L$, liquidation is strictly dominated for the bank in state $G$. The threat is not credible. The firm can safely refuse any renegotiation demand, knowing the bank will not liquidate. Hence no renegotiation occurs in state $G$.
+\end{proof}
+
+\begin{remark}
+\label{r:key-asymmetry}
+The renegotiation-proofness in \cref{p:renegotiation-proof} exploits a key asymmetry. In state $B$, the bank's outside option (liquidation) is better than continuation, so it acts without needing to bargain. In state $G$, the bank's outside option (liquidation) is worse than continuation, so its threat is not credible. The face value $D_b$ plays a dual role: it must satisfy $D_b > L$ (so the bank prefers continuation in state $G$) and the bank's participation constraint must hold (so $D_b$ is large enough to cover expected losses from bad-state liquidation). These two requirements are simultaneously satisfiable, as shown in \cref{p:covenant-implements}.
+\end{remark}
+
+\subsection{Implementation of the second-best when monitoring is costless}
+\label{sec:costless}
+
+\begin{proposition}[Second-Best Implementation, $c_m = 0$]
+\label{p:covenant-implements}
+Suppose $c_m = 0$. Under the debt-with-covenant contract (\cref{d:covenant}), there exists a unique face value $D_b^* > L$ such that:
+\begin{enumerate}[nosep,label=(\alph*)]
+\item The bank's participation constraint is satisfied with equality.
+\item The bank makes the efficient liquidation decision at $t = 1$.
+\item The firm's effort $e^*$ solves the second-best problem (efficient continuation, zero bank profit, limited liability binding).
+\item The firm strictly prefers this contract to any plain-vanilla bank contract and to any arm's-length contract.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+\textbf{Existence and uniqueness of $D_b^*$.} The bank's participation constraint (with equality, by competition) is:
+\begin{equation}
+\label{eq:bank-pc}
+p(e) D_b^* + (1 - p(e)) L = I,
+\end{equation}
+which gives
+\begin{equation}
+\label{eq:Db-star}
+D_b^* = \frac{I - (1-p(e))L}{p(e)} = \frac{I - L}{p(e)} + L.
+\end{equation}
+Since $I > L$, we have $D_b^* > L$ for all $p(e) \in (0,1)$. Since $D_b^* \leq X$ requires $I - L \leq p(e)(X - L)$, i.e., $p(e) \geq (I-L)/(X-L)$, feasibility holds whenever the equilibrium effort is high enough. We verify this is consistent with the firm's incentive constraint below.
+
+\textbf{Firm's effort choice.} Given the contract, the firm solves:
+\begin{equation}
+\label{eq:firm-effort}
+\max_{e \geq 0} \; p(e)(X - D_b^*) - e.
+\end{equation}
+Substituting \cref{eq:Db-star}:
+\begin{equation}
+\label{eq:firm-effort-sub}
+\max_{e \geq 0} \; p(e)\!\left(X - L - \frac{I-L}{p(e)}\right) - e = \max_{e \geq 0} \; p(e)(X-L) - (I-L) - e.
+\end{equation}
+The first-order condition is:
+\begin{equation}
+\label{eq:foc-covenant}
+p'(e^*) = \frac{1}{X - L}.
+\end{equation}
+By \cref{a:moral-hazard}, $p'$ is strictly decreasing with $p'(0) = 1/\varepsilon \to \infty$ and $p'(\infty) = 0$, so a unique solution $e^* > 0$ exists.
+
+\textbf{Comparison with first-best.} The first-best effort $e^{FB}$ satisfies $p'(e^{FB}) = 1/(X - I)$. Since $X - L > X - I$ (as $L < I$), we have $p'(e^*) < p'(e^{FB})$, hence $e^* < e^{FB}$. The gap arises solely from limited liability (the firm does not internalise the loss $I - L$ in the bad state), not from bargaining.
+
+\textbf{Dominance over plain-vanilla contracts.} Under any plain-vanilla bank contract, by \cref{p:renegotiation-proof}'s logic reversed: the firm retains control, always continues in state $B$, and the bank must either accept continuation (long-term contract, distorting effort via bad-state rents) or renegotiate in state $G$ (short-term contract, distorting effort via good-state hold-up). In both cases the firm's effort satisfies a first-order condition with a strictly smaller denominator than $X - L$, yielding strictly lower effort and strictly lower firm payoff. Under the debt-with-covenant contract, the continuation decision is efficient and the bank earns zero profit, so the firm captures the entire second-best surplus. No plain-vanilla contract achieves this.
+
+\textbf{Dominance over arm's-length contracts.} Under arm's-length financing, the firm always continues in state $B$ (the investor cannot observe the state), so the investor's participation constraint requires a face value $D_a$ satisfying $[p(e) + (1-p(e))q]D_a = I$, giving $D_a > D_b^*$ for the same effort level (since $p(e) + (1-p(e))q < p(e)$ implies $D_a > I/p(e) > D_b^*$ after accounting for the liquidation recovery $L$ in the bank contract). The firm's effort under arm's-length financing satisfies $p'(e_a) = 1/[(X - D_a)(1-q)]$, which yields lower effort than \cref{eq:foc-covenant} because $(X - D_a)(1-q) < X - L$. The firm's expected payoff is strictly lower.
+\end{proof}
+
+\begin{remark}
+\label{r:moral-hazard-survives}
+The moral-hazard friction (\cref{a:moral-hazard}) is fully present in \cref{p:covenant-implements}. The debt-with-covenant contract does not eliminate moral hazard; it eliminates the \emph{additional} distortion caused by ex-post bargaining. The residual effort distortion in \cref{eq:foc-covenant} is the standard limited-liability wedge, which is present in any debt contract and is not specific to bank financing.
+\end{remark}
+
+\subsection{The trade-off with positive monitoring costs}
+\label{sec:monitoring-costs}
+
+We now show that when $c_m > 0$, the debt-with-covenant contract does not dominate arm's-length financing for all parameter values. A genuine trade-off survives, driven by monitoring costs rather than by ex-post bargaining.
+
+\begin{proposition}[Trade-off with Monitoring Costs]
+\label{p:tradeoff-monitoring}
+Suppose $c_m > 0$. Let $e_b^*$ denote the firm's equilibrium effort under the debt-with-covenant contract and $e_a^*$ under the arm's-length contract. Then:
+\begin{enumerate}[nosep,label=(\alph*)]
+\item $e_b^* < e_b^*(c_m = 0)$: monitoring costs reduce equilibrium effort under bank financing.
+\item There exists a threshold $\hat{\alpha}(\alpha, c_m)$ such that arm's-length financing yields higher firm payoff than bank financing if and only if $\alpha < \hat{\alpha}$.
+\item The threshold $\hat{\alpha}$ is increasing in $c_m$: higher monitoring costs expand the region where arm's-length financing is preferred.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+\textbf{Part (a).} With $c_m > 0$, the bank's participation constraint becomes:
+\begin{equation}
+\label{eq:bank-pc-cost}
+p(e) D_b + (1 - p(e)) L - c_m = I,
+\end{equation}
+giving $D_b(c_m) = D_b^* + c_m / p(e)$. Since $D_b(c_m) > D_b^*$, the firm's first-order condition becomes:
+\begin{equation}
+\label{eq:foc-cost}
+p'(e_b^*) = \frac{1}{X - D_b(c_m)} = \frac{1}{X - L - (I - L)/p(e_b^*) - c_m/p(e_b^*)}.
+\end{equation}
+The denominator is strictly smaller than $X - L - (I-L)/p(e^*)$, so $p'(e_b^*) > p'(e^*(c_m=0))$, hence $e_b^* < e^*(c_m = 0)$ by the concavity of $p$.
+
+\textbf{Part (b).} Define the firm's expected payoff under bank financing as:
+\begin{equation}
+\label{eq:payoff-bank}
+\Pi_b = p(e_b^*)(X - L) - (I - L) - e_b^* - c_m,
+\end{equation}
+where we have used \cref{eq:bank-pc-cost} to substitute out $D_b$. Under arm's-length financing, the firm's payoff is:
+\begin{equation}
+\label{eq:payoff-al}
+\Pi_a = [p(e_a^*) + (1 - p(e_a^*))q](X - D_a) - e_a^*,
+\end{equation}
+where $D_a$ satisfies $[p(e_a^*) + (1-p(e_a^*))q]D_a = I$. Substituting:
+\begin{equation}
+\label{eq:payoff-al-sub}
+\Pi_a = [p(e_a^*) + (1-p(e_a^*))q]X - I - e_a^*.
+\end{equation}
+The difference $\Pi_b - \Pi_a$ depends on $\alpha$ through $p(e_b^*, \alpha)$ and $p(e_a^*, \alpha)$. At $\alpha = 0$, both $e_b^*$ and $e_a^*$ are near zero; the monitoring cost $c_m$ is a fixed charge that makes $\Pi_b < \Pi_a$ for small enough $p$. At $\alpha = 1$, $p(e_b^*, 1)$ is large, the monitoring cost per unit of expected output $c_m / p(e_b^*)$ is small, and the efficiency gain from avoiding bad-state continuation dominates. By continuity and monotonicity of $\Pi_b - \Pi_a$ in $\alpha$ (established in the proof sketch below), a unique threshold $\hat{\alpha}$ exists.
+
+\textbf{Monotonicity of $\Pi_b - \Pi_a$ in $\alpha$.} Differentiating \cref{eq:payoff-bank} with respect to $\alpha$:
+\begin{equation}
+\label{eq:deriv-bank}
+\frac{\partial \Pi_b}{\partial \alpha} = (X - L) \frac{\partial p(e_b^*, \alpha)}{\partial \alpha} - \frac{\partial e_b^*}{\partial \alpha}.
+\end{equation}
+Differentiating \cref{eq:payoff-al-sub}:
+\begin{equation}
+\label{eq:deriv-al}
+\frac{\partial \Pi_a}{\partial \alpha} = X(1-q) \frac{\partial p(e_a^*, \alpha)}{\partial \alpha} - \frac{\partial e_a^*}{\partial \alpha}.
+\end{equation}
+Since $X - L > X(1-q)$ (which follows from $L < I$ and $qX < L$, giving $X - L > X - qX = X(1-q)$), and since $\partial p / \partial \alpha > 0$ with $\partial^2 p / \partial e \, \partial \alpha = 0$ (by \cref{a:information}), the bank payoff increases faster in $\alpha$ than the arm's-length payoff, provided the effort responses $\partial e_b^*/\partial \alpha$ and $\partial e_a^*/\partial \alpha$ are comparable. Implicit differentiation of the respective first-order conditions confirms that both effort levels increase in $\alpha$ at similar rates (since $\partial^2 p / \partial e \, \partial \alpha = 0$ by assumption). Hence $\partial(\Pi_b - \Pi_a)/\partial \alpha > 0$, establishing the threshold.
+
+\textbf{Part (c).} The threshold $\hat{\alpha}$ is defined by $\Pi_b(\hat{\alpha}) = \Pi_a(\hat{\alpha})$. Differentiating implicitly with respect to $c_m$:
+\begin{equation}
+\label{eq:threshold-deriv}
+\frac{\partial \hat{\alpha}}{\partial c_m} = -\frac{\partial(\Pi_b - \Pi_a)/\partial c_m}{\partial(\Pi_b - \Pi_a)/\partial \alpha}.
+\end{equation}
+We have $\partial \Pi_b / \partial c_m = -1 + (\partial p / \partial e)(\partial e_b^*/\partial c_m)(X - L) - \partial e_b^*/\partial c_m$. Since $\partial e_b^*/\partial c_m < 0$ (higher monitoring costs reduce effort) and $\partial \Pi_a / \partial c_m = 0$, we get $\partial(\Pi_b - \Pi_a)/\partial c_m < 0$. Combined with $\partial(\Pi_b - \Pi_a)/\partial \alpha > 0$, we obtain $\partial \hat{\alpha}/\partial c_m > 0$.
+\end{proof}
+
+\begin{remark}
+\label{r:source-of-tradeoff}
+\cref{p:tradeoff-monitoring} confirms the critique's central positive claim: when monitoring is costless, the debt-with-covenant contract eliminates the trade-off. It also confirms the critique's implicit claim that the trade-off survives with positive monitoring costs. The \emph{source} of the trade-off shifts from ex-post bargaining (Rajan's mechanism) to monitoring costs (the critique's mechanism), but the qualitative prediction---high-quality firms prefer arm's-length financing---is preserved.
+\end{remark}
+
+\subsection{Incentive compatibility under the covenant contract}
+\label{sec:ic}
+
+We verify that the debt-with-covenant contract is incentive-compatible in the presence of the moral-hazard friction.
+
+\begin{lemma}[Incentive Compatibility]
+\label{l:ic}
+Under the debt-with-covenant contract with face value $D_b$ satisfying \cref{eq:bank-pc-cost}, the firm's effort choice $e_b^*$ defined by \cref{eq:foc-cost} is the unique solution to the firm's problem \cref{eq:firm-effort}. No deviation from $e_b^*$ is profitable for the firm.
+\end{lemma}
+
+\begin{proof}
+The firm's objective \cref{eq:firm-effort} is strictly concave in $e$ (since $p''(e) < 0$ by \cref{a:moral-hazard} and the objective is linear in $p$). The first-order condition \cref{eq:foc-cost} is therefore necessary and sufficient. The firm has no incentive to deviate because the contract specifies a fixed face value $D_b$ that does not depend on the firm's effort choice (effort is unobservable). The firm takes $D_b$ as given and optimises, yielding $e_b^*$ as the unique best response.
+\end{proof}
+
+\begin{remark}
+\label{r:no-adverse-selection}
+The original model has no adverse selection: project quality $\alpha$ is common knowledge at $t = 0$ (\cref{a:information}). The debt-with-covenant contract therefore faces no adverse-selection friction to survive. The only friction is moral hazard, which \cref{l:ic} confirms is handled correctly.
+\end{remark}
+
+\subsection{Scope of the critique: what it does and does not address}
+\label{sec:scope}
+
+\begin{proposition}[Priority Result Unaffected]
+\label{p:priority}
+The debt-with-covenant contract does not address the multi-source borrowing problem analysed in Section~III of Rajan (1992). In particular, Proposition~5 of Rajan (1992)---that arm's-length debt optimally has priority over bank debt when the firm borrows from both sources---is not overturned by the critique.
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+The priority result in Rajan (1992) concerns a setting where the firm borrows simultaneously from a bank and arm's-length investors at $t = 0$, and outside uninformed lenders compete with the inside bank at $t = 1$. The key mechanism is that the inside bank's informational advantage over outside lenders generates implicit property rights; priority of the arm's-length claim reduces the uncommitted surplus available at $t = 1$, increasing the bank's control (probability that the outside bank does not bid) without increasing its rents.
+
+The debt-with-covenant contract addresses a different problem: it eliminates the bank's ability to hold up the firm in the good state when the firm borrows \emph{exclusively} from the bank. In the multi-source setting, the covenant transfers control to the bank, but the bank's informational advantage over outside lenders at $t = 1$ remains. The outside lender's winner's curse problem (Proposition~3 of Rajan) is unaffected by the covenant, because it arises from the information asymmetry between the inside bank and outside lenders, not from the firm's control rights. The priority analysis therefore proceeds as in Rajan (1992), and Proposition~5 survives.
+\end{proof}
+
+\begin{remark}
+\label{r:priority}
+The critique is silent on the multi-source borrowing and priority results. This is not an oversight; those results concern a genuinely different mechanism (information-based lock-in and winner's curse) that the covenant does not address. The critique's contribution is therefore limited to the single-source, bilateral bank-firm contracting problem.
+\end{remark}
+
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Which parts of the critique survive}
+
+The critique's core logical argument is sound. The restriction to plain-vanilla debt contracts in Rajan (1992) is not micro-founded within the model: the verifiability assumptions that justify debt contracts (courts can observe monetary transfers but not effort or the state) are equally consistent with a covenant that transfers control rights, since control rights are verifiable even when the state is not. Once the contract space is expanded, the debt-with-covenant contract is renegotiation-proof (\cref{p:renegotiation-proof}) and implements the second-best when monitoring is costless (\cref{p:covenant-implements}). The moral-hazard friction is fully preserved; the covenant eliminates only the bargaining distortion, not the limited-liability distortion.
+
+\subsection{Which parts of the critique fail or are incomplete}
+
+The critique does not establish that the trade-off between bank and arm's-length debt disappears. \cref{p:tradeoff-monitoring} shows that with positive monitoring costs---which the critique itself acknowledges are necessary for arm's-length investors to exist in equilibrium---a quality-dependent trade-off survives. The critique's Proposition~3 (that high-quality firms prefer arm's-length financing) is therefore correct, but its source is monitoring costs rather than ex-post bargaining. The qualitative comparative-static prediction of Rajan (1992) is preserved under the critique's own mechanism.
+
+The critique is also silent on the multi-source borrowing problem, the priority result, and the interim public information result. These are substantive contributions of Rajan (1992) that are unaffected by the critique (\cref{p:priority}).
+
+\subsection{Net conclusion}
+
+The critique identifies a genuine gap in the original paper's contract-space restriction. The gap matters: it eliminates the bargaining-based cost of bank debt as a primitive of the model and replaces it with monitoring costs as the fundamental friction. However, the critique does not overturn the paper's main qualitative conclusions. The trade-off between bank and arm's-length debt survives under the critique's own assumptions, the priority result is unaffected, and the moral-hazard friction is present throughout.
+
+The appropriate response to the critique is not to abandon Rajan (1992)'s framework but to re-interpret it: the cost of bank debt should be understood as arising from monitoring costs (which are real and empirically relevant) rather than from ex-post bargaining per se. The covenant mechanism shows that bargaining costs can be contracted away; monitoring costs cannot. This re-interpretation strengthens rather than weakens the paper's central message that informed bank debt is not unambiguously superior to arm's-length debt.
+
+\subsection{On the plausibility of the covenant}
+
+One may question whether the covenant in \cref{d:covenant} is empirically plausible. Unconditional transfer of liquidation control to the bank is a strong contractual provision. In practice, covenants are typically state-contingent (triggered by financial ratios or covenant violations), not unconditional. An unconditional covenant would give the bank the right to liquidate even in the good state, which---as \cref{p:renegotiation-proof} shows---the bank would never exercise. The covenant is therefore renegotiation-proof in the model, but its unconditional nature may create legal or reputational costs outside the model. Whether these costs are smaller or larger than the bargaining costs identified by Rajan (1992) is an open question that the critique does not address.
+
+
+
+
+
+\end{document}

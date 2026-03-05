@@ -8,6 +8,8 @@ Orchestrates multi-step paper generation from a source paper + critique:
   4. Assemble into a compilable LaTeX document via Jinja template.
 """
 
+from __future__ import annotations
+
 import json
 import os
 import re
