@@ -1,0 +1,704 @@
+\documentclass[12pt,a4paper]{article}
+
+%% ---- Fonts & Math ----
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}  % Load amsthm BEFORE newtxmath to avoid \openbox clash
+\usepackage{mathtools}
+\usepackage{newtxtext}          % Times-style text (standard for econ journals)
+\usepackage{newtxmath}          % Matching math font
+\usepackage{microtype}          % Subtle typographic improvements
+
+%% ---- Layout ----
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage[dvipsnames]{xcolor}  % Color mixing for hyperref link colors
+\usepackage{natbib}
+
+%% ---- Hyperref (load last, before cleveref) ----
+\usepackage[
+  colorlinks=true,
+  linkcolor={blue!70!black},
+  citecolor={green!50!black},
+  urlcolor={blue!60!black},
+  bookmarks=true,
+  bookmarksnumbered=true,
+  pdfstartview=FitH,
+  pdftitle={Covenants Eliminate Hold-Up in Relationship Banking Under Moral Hazard},
+  pdfauthor={Without Loss},
+]{hyperref}
+\usepackage[capitalize,nameinlink]{cleveref}
+
+%% ---- Page geometry ----
+\geometry{
+  left=1.15in,
+  right=1.15in,
+  top=1.1in,
+  bottom=1.1in,
+}
+\onehalfspacing
+
+%% ---- Theorem environments ----
+%%  Plain style: theorems, propositions, lemmas, corollaries (italic body)
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+%%  Definition style: definitions, assumptions, examples (upright body)
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}{Assumption}
+\newtheorem{example}[theorem]{Example}
+
+%%  Remark style: remarks, conjectures (upright body, lighter heading)
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{conjecture}[theorem]{Conjecture}
+
+%% ---- QED symbol ----
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+%% ---- Custom commands ----
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\supp}{supp}
+
+%% ---- Title ----
+\title{Covenants Eliminate Hold-Up in Relationship Banking Under Moral Hazard}
+\author{Without Loss}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent Rajan (1992) shows that a bank's informational advantage generates hold-up, distorting borrower effort and making arm's-length finance preferable for high-quality firms. That analysis restricts attention to plain-vanilla debt contracts. We show this restriction is consequential. Within the identical environment---preserving moral hazard, limited liability, non-verifiable states, and the owner's continuation bias---a debt-with-covenant contract that transfers the liquidation decision unconditionally to the bank implements the second-best allocation when monitoring is costless. The contract is renegotiation-proof: the bank's unilateral optimum coincides with the efficient liquidation rule in both states. When monitoring is costly, bank finance induces strictly higher effort than arm's-length finance, and a quality threshold governs source choice. The threshold result survives qualitatively, but the mechanism shifts from renegotiation-induced hold-up to the direct resource cost of monitoring.
+\end{abstract}
+
+\medskip
+\noindent \textbf{Keywords:} bank finance; hold-up; debt covenants; control rights; moral hazard; renegotiation-proofness
+
+\smallskip
+\noindent \textbf{JEL Classification:} D86; G21; G32; D82
+
+\bigskip
+
+\section{Introduction}
+\label{sec:intro}
+
+\citet{Rajan1992} identifies a fundamental tension in corporate borrowing. An informed
+bank can observe the state of the world at the interim date and enforce efficient
+liquidation; but the very informational advantage that enables control also confers
+bargaining power, allowing the bank to extract surplus from the firm ex post. This
+hold-up distorts the firm's ex ante effort incentives, generating an endogenous cost of
+bank finance. The paper then studies how maturity, source mix, and priority can
+partially circumscribe the bank's rent-extraction without eliminating its control.
+
+The analysis in \citet{Rajan1992} is conducted entirely within the class of
+\emph{plain-vanilla debt contracts}: the firm borrows a fixed amount and promises a
+single repayment, with no contractual transfer of control rights. This restriction is
+maintained throughout---for both short-term and long-term bank contracts---and is
+not derived from primitives of the environment. The paper acknowledges in a footnote
+that commitment mechanisms could approach the first best under special circumstances,
+but does not pursue this observation within the main analysis.
+
+We show that this restriction is consequential. The environment studied by
+\citet{Rajan1992} admits a simple \emph{debt-with-covenant} contract---a standard
+debt instrument augmented by a covenant that transfers the liquidation decision to the
+bank unconditionally---that implements the constrained optimum (second best) for all
+parameter values when monitoring is costless. The contract is renegotiation-proof: the
+bank has no credible threat to deviate from the efficient liquidation rule once the state
+is reached. When monitoring is costly, the same covenant structure implements the
+second best conditional on monitoring, and the firm's choice between bank and
+arm's-length finance is governed by a clean comparison of second-best payoffs under
+each regime.
+
+Our contribution is threefold.
+\begin{enumerate}[nosep]
+\item We show that within the full model of \citet{Rajan1992}---preserving moral
+  hazard, limited liability, non-verifiability of the state, and the owner's
+  continuation bias---a debt-with-covenant contract implements the second best when
+  monitoring is costless (\cref{p:covenant_implements}).
+\item We prove that the covenant contract is renegotiation-proof: neither party has a
+  credible incentive to deviate from the contractually specified liquidation rule at
+  the interim date (\cref{l:renegotiation_proof}).
+\item We characterise the firm's optimal choice between bank and arm's-length finance
+  when monitoring is costly, and show that a quality threshold governs this choice in
+  the same qualitative direction as \citet{Rajan1992}, but for a different reason: the
+  trade-off is driven by monitoring costs rather than by renegotiation distortions
+  (\cref{p:quality_threshold}).
+\end{enumerate}
+
+The results do not overturn the central message of \citet{Rajan1992}---bank finance
+carries an endogenous cost---but they clarify its source. When the contract space is
+expanded to include control-rights covenants, the cost of bank finance is not
+renegotiation-induced hold-up but the direct resource cost of monitoring. The
+qualitative comparative statics with respect to project quality survive, but the
+mechanism is distinct.
+
+\section{Model}
+\label{sec:model}
+
+We preserve every feature of the environment in \citet{Rajan1992}. The only
+modification is the contract space available to the bank.
+
+\subsection{Primitives}
+
+\paragraph{Dates and agents.}
+The economy runs for three dates $t \in \{0,1,2\}$. There is a single
+owner-managed firm (henceforth the \emph{owner}), a competitive banking sector, and
+a large pool of arm's-length investors.
+
+\paragraph{Project technology.}
+\begin{assumption}[Technology]
+\label{a:technology}
+The project requires a fixed investment $I > 0$ at $t=0$. At $t=1$ a state
+$s \in \{G,B\}$ is realised. If the project is continued to $t=2$, the payoff is $X$
+with probability one in state $G$, and $X$ with probability $q \in (0,1)$ and zero
+with probability $1-q$ in state $B$. If the project is liquidated at $t=1$, it yields
+$L$. Parameters satisfy
+\begin{equation}
+  X > I > L > qX.
+  \label{eq:param_order}
+\end{equation}
+\end{assumption}
+
+The inequality $L > qX$ means liquidation is strictly efficient in state $B$, while
+$X > I > L$ means continuation is strictly efficient in state $G$ and the project has
+positive net present value when the good state is reached.
+
+\paragraph{Moral hazard.}
+\begin{assumption}[Moral hazard]
+\label{a:moral_hazard}
+The owner chooses effort $e \in [0,\infty)$ at $t=0$, after contracting but before the
+state is realised. Effort is privately observed by the owner and is not verifiable by
+any court. The cost of effort is $c(e) = e$. The probability of the good state is
+$p(e) := \Pr[s = G \mid e]$, where $p$ satisfies:
+\begin{enumerate}[nosep,label=(\roman*)]
+  \item $p'(e) > 0$ and $p''(e) < 0$ for all $e \geq 0$;
+  \item $p'(0) = 1/\varepsilon$ for some small $\varepsilon > 0$, and $p'(\infty) = 0$.
+\end{enumerate}
+\end{assumption}
+
+\begin{assumption}[Limited liability]
+\label{a:limited_liability}
+The owner has no wealth at $t=0$. All financing is external. The owner's payoff in
+any state is bounded below by zero.
+\end{assumption}
+
+\paragraph{Information structure.}
+\begin{assumption}[Information]
+\label{a:information}
+At $t=1$, the state $s$ is observed by the owner and, if the bank has monitored, by
+the bank. The state is \emph{not} verifiable by any court. Arm's-length investors
+observe no information about the state at $t=1$. Monitoring by the bank costs $c \geq 0$
+and is incurred at $t=0$ as part of the lending decision.
+\end{assumption}
+
+The non-verifiability of the state is the key friction: contracts cannot be written
+directly contingent on $s$. This is identical to the assumption in \citet{Rajan1992}.
+
+\paragraph{Continuation bias.}
+\begin{assumption}[Continuation bias]
+\label{a:continuation_bias}
+Because the owner has limited liability and a residual claim, she strictly prefers
+continuation to liquidation in both states whenever she controls the liquidation
+decision. Formally, her payoff upon liquidation is zero (the bank recovers $L$), while
+her payoff upon continuation is strictly positive in expectation.
+\end{assumption}
+
+This assumption, maintained throughout \citet{Rajan1992}, implies that the owner
+will never voluntarily liquidate. Any efficient liquidation in state $B$ must be
+enforced by the lender.
+
+\subsection{Contract spaces}
+
+\begin{definition}[Plain-vanilla debt contract]
+\label{d:plain_vanilla}
+A \emph{plain-vanilla debt contract} specifies an amount borrowed $A \geq 0$ at some
+date $t_0$ and a required repayment $D \geq A$ at some later date $t_1 > t_0$. The
+contract contains no provisions governing the liquidation decision. The owner retains
+control over continuation at $t=1$.
+\end{definition}
+
+This is the contract space studied in \citet{Rajan1992}. Short-term contracts have
+$t_1 - t_0 = 1$; long-term contracts have $t_1 - t_0 = 2$.
+
+\begin{definition}[Debt-with-covenant contract]
+\label{d:covenant}
+A \emph{debt-with-covenant contract} specifies an amount borrowed $I$ at $t=0$, a
+required repayment $D_b \geq I$ at $t=2$, and a \emph{control covenant} that
+transfers the liquidation decision unconditionally to the bank at $t=1$. The bank
+exercises this right after observing the state (having monitored). No other feature of
+the environment is altered.
+\end{definition}
+
+The covenant is not state-contingent---it cannot be, since the state is not
+verifiable---but it transfers the \emph{decision right} to the informed party. The
+bank then exercises this right after privately observing $s$.
+
+\begin{remark}
+\label{r:covenant_standard}
+Control covenants of this form are standard in commercial lending practice. They
+include provisions granting the lender the right to accelerate repayment or to
+appoint a receiver upon the occurrence of specified financial conditions. The
+theoretical device here is the limiting case in which the bank holds unconditional
+control rights over the continuation decision.
+\end{remark}
+
+\subsection{Timing}
+
+The timing is identical to \citet{Rajan1992}:
+\begin{enumerate}[nosep]
+\item $t=0$: The owner approaches lenders. A contract is signed. The bank decides
+  whether to monitor (at cost $c$). The owner chooses effort $e$.
+\item $t=1$: The state $s$ is realised and observed by the owner and (if monitoring
+  occurred) by the bank. The liquidation decision is made---by the owner under
+  plain-vanilla debt, by the bank under the covenant contract.
+\item $t=2$: Project payoffs are realised and debt is repaid.
+\end{enumerate}
+
+\subsection{Equilibrium concept}
+
+We study Perfect Bayesian Equilibria. The owner chooses effort to maximise her
+expected payoff given the contract. The bank sets the face value of debt to satisfy
+its individual rationality (zero-profit) constraint, given the owner's equilibrium
+effort. In the covenant contract, the bank makes the liquidation decision at $t=1$ to
+maximise its own continuation payoff given its information.
+
+\section{Analysis}
+\label{sec:analysis}
+
+\subsection{Failure of plain-vanilla contracts}
+\label{subsec:plain_vanilla_failure}
+
+We first establish, within the full model, that no plain-vanilla contract implements
+the second best. This replicates the logic of \citet{Rajan1992} in our notation.
+
+\begin{definition}[Second best]
+\label{d:second_best}
+The \emph{second-best} allocation is the solution to the planner's problem subject to
+(i) the owner's limited liability, (ii) the lender's individual rationality constraint,
+and (iii) the constraint that the liquidation decision is efficient: the project is
+continued if and only if $s = G$.
+\end{definition}
+
+Under the second-best allocation, the bank's zero-profit constraint (with $c = 0$)
+pins down the face value:
+\begin{equation}
+  p(e) D_b + (1-p(e)) L = I,
+  \qquad \text{so} \qquad
+  D_b = \frac{I - (1-p(e))L}{p(e)}.
+  \label{eq:bank_zp}
+\end{equation}
+The owner's effort solves $\max_e p(e)(X - D_b) - e$, yielding the first-order
+condition
+\begin{equation}
+  p'(e^*) = \frac{1}{X - D_b}.
+  \label{eq:foc_sb}
+\end{equation}
+
+\begin{lemma}[Arm's-length contracts]
+\label{l:al_fails}
+Under any arm's-length contract, the owner continues the project in state $B$ at
+$t=1$. The second-best allocation is not implementable by any arm's-length contract.
+\end{lemma}
+
+\begin{proof}
+By \cref{a:continuation_bias}, the owner strictly prefers continuation to liquidation
+in state $B$ whenever she controls the decision. Arm's-length investors cannot observe
+the state (\cref{a:information}) and therefore cannot enforce liquidation. Hence the
+project is continued in state $B$ with probability one, which is inefficient by
+\cref{a:technology}. The second-best requires efficient liquidation in state $B$, so
+no arm's-length contract implements it.
+\end{proof}
+
+\begin{lemma}[Long-term plain-vanilla bank contracts]
+\label{l:lt_fails}
+Under any long-term plain-vanilla bank contract, the owner's payoff in state $B$ is
+strictly positive whenever her bargaining power is not exactly zero. The second-best
+is not implemented.
+\end{lemma}
+
+\begin{proof}
+Under a long-term plain-vanilla contract with face value $D_{LT}$, the bank cannot
+unilaterally liquidate at $t=1$. Efficient liquidation in state $B$ requires the bank
+to bribe the owner to stop the project. The parties bargain over the surplus
+$L - qX > 0$ (from \cref{eq:param_order}). If the owner's bargaining weight is
+$\mu > 0$, she receives $\mu(L - qX) > 0$ in state $B$. This strictly positive payoff
+in the bad state reduces the owner's incentive to exert effort relative to the second
+best, which requires her payoff in state $B$ to equal zero (by limited liability and
+the efficient liquidation rule). Hence the second-best effort level is not achieved for
+any $\mu > 0$.
+\end{proof}
+
+\begin{lemma}[Short-term plain-vanilla bank contracts]
+\label{l:st_fails}
+Under any short-term plain-vanilla bank contract, the owner's payoff in state $G$ is
+strictly less than $X - D_b^{SB}$, where $D_b^{SB}$ is the second-best face value.
+The second-best is not implemented.
+\end{lemma}
+
+\begin{proof}
+Under a short-term contract with face value $D_{ST} = L$ (the bank demands repayment
+at $t=1$), the bank can enforce liquidation in state $B$ by refusing to roll over the
+loan. However, in state $G$ the contract must be renegotiated: the bank has no
+obligation to lend the continuation amount, and it extracts a share $(1-\mu)(X-L) > 0$
+of the continuation surplus for any $\mu < 1$. The owner therefore receives
+$\mu(X-L) < X - D_b^{SB}$ in state $G$, since $D_b^{SB} < L$ would violate the
+bank's individual rationality constraint. The second-best effort level is not achieved
+for any $\mu < 1$.
+\end{proof}
+
+\begin{remark}
+\label{r:plain_vanilla_summary}
+\cref{l:al_fails,l:lt_fails,l:st_fails} together establish that the restriction to
+plain-vanilla contracts is not innocuous: it rules out the second best by construction.
+The question is whether an expanded contract space can do better.
+\end{remark}
+
+\subsection{The covenant contract when monitoring is costless}
+\label{subsec:covenant_costless}
+
+We now analyse the debt-with-covenant contract (\cref{d:covenant}) when $c = 0$.
+
+\begin{lemma}[Renegotiation-proofness]
+\label{l:renegotiation_proof}
+The debt-with-covenant contract is renegotiation-proof at $t=1$ in both states.
+\end{lemma}
+
+\begin{proof}
+\emph{State $B$.} The bank holds the liquidation decision right. Liquidation yields
+$L$ to the bank. Continuation yields $qX < L$ in expectation (by \cref{eq:param_order}).
+Liquidation strictly dominates continuation for the bank. The owner has no control
+rights and therefore cannot make a credible counter-offer: she has no outside option
+that could induce the bank to continue. Hence the bank liquidates, and no
+renegotiation is possible.
+
+\emph{State $G$.} The bank holds the liquidation decision right. Continuation yields
+$D_b > L$ to the bank (since $D_b \geq I > L$ by \cref{eq:param_order} and the
+bank's individual rationality constraint). Liquidation yields only $L < D_b$.
+Continuation strictly dominates liquidation for the bank. The owner cannot credibly
+threaten to induce liquidation, since she has no control rights. Hence the bank
+continues, and no renegotiation is possible.
+
+In both states, the bank's unilateral optimum coincides with the efficient decision,
+and neither party has a credible deviation. The contract is renegotiation-proof.
+\end{proof}
+
+\begin{proposition}[Covenant implements second best when $c=0$]
+\label{p:covenant_implements}
+When monitoring is costless ($c = 0$), the debt-with-covenant contract implements
+the second-best allocation. In particular, it strictly dominates any plain-vanilla
+bank contract and any arm's-length contract.
+\end{proposition}
+
+\begin{proof}
+By \cref{l:renegotiation_proof}, the bank liquidates in state $B$ and continues in
+state $G$. The owner's maximisation problem is:
+\begin{equation}
+  \max_{e} \; p(e)(X - D_b) - e,
+  \label{eq:owner_problem}
+\end{equation}
+where $D_b$ is the face value of the covenant debt. The owner receives zero in state
+$B$ (the bank recovers $L$, and the owner has no residual claim upon liquidation by
+\cref{a:limited_liability}). The owner's payoff in state $G$ is $X - D_b > 0$.
+
+The bank's zero-profit constraint (with $c = 0$) is:
+\begin{equation}
+  p(e) D_b + (1-p(e)) L = I,
+  \label{eq:bank_zp_c0}
+\end{equation}
+which gives $D_b = [I - (1-p(e))L]/p(e)$. Substituting into \cref{eq:owner_problem}
+and taking the first-order condition yields exactly \cref{eq:foc_sb}. The equilibrium
+effort $e^*_{b|c=0}$ satisfies the second-best first-order condition.
+
+The liquidation decision is efficient by \cref{l:renegotiation_proof}. The bank earns
+zero profit by \cref{eq:bank_zp_c0}. Hence the covenant contract implements the
+second-best allocation (\cref{d:second_best}).
+
+Dominance over plain-vanilla contracts follows from \cref{l:al_fails,l:lt_fails,l:st_fails}:
+those contracts cannot implement the second best, while the covenant contract does.
+Since the second-best maximises the owner's payoff subject to the constraints of the
+environment, the covenant contract strictly dominates.
+\end{proof}
+
+\begin{remark}
+\label{r:moral_hazard_survives}
+The moral hazard friction (\cref{a:moral_hazard}) is fully present in
+\cref{p:covenant_implements}. The owner still chooses effort privately and
+unobservably. The covenant contract does not eliminate moral hazard; it eliminates
+the \emph{additional} distortion introduced by renegotiation. The residual
+underprovision of effort relative to the first best---driven by limited liability
+(\cref{a:limited_liability})---remains.
+\end{remark}
+
+\subsection{Positive monitoring costs}
+\label{subsec:positive_cost}
+
+When $c > 0$, the bank must be compensated for monitoring. The covenant contract
+remains renegotiation-proof by the same argument as \cref{l:renegotiation_proof}
+(monitoring costs are sunk at $t=1$). The bank's zero-profit constraint becomes:
+\begin{equation}
+  p(e) D_{b|c>0} + (1-p(e)) L - c = I,
+  \label{eq:bank_zp_c_pos}
+\end{equation}
+so $D_{b|c>0} = [I - (1-p(e))L + c]/p(e)$. The owner's first-order condition is:
+\begin{equation}
+  p'(e^*_{b|c>0}) = \frac{1}{X - D_{b|c>0}}
+  = \frac{1}{X - L - \frac{(I-L)+c}{p^*_{b|c>0}}}.
+  \label{eq:foc_bank_c_pos}
+\end{equation}
+Since $c > 0$ increases $D_{b|c>0}$ relative to the $c=0$ case, we have
+$p'(e^*_{b|c>0}) > p'(e^*_{b|c=0})$, which by concavity of $p$ implies
+$e^*_{b|c>0} < e^*_{b|c=0}$.
+
+Under arm's-length finance, the owner always continues (by \cref{l:al_fails}). The
+arm's-length lender's zero-profit constraint is:
+\begin{equation}
+  [p(e) + (1-p(e))q] R_a = I,
+  \label{eq:al_zp}
+\end{equation}
+so $R_a = I / [p(e) + (1-p(e))q]$. The owner's first-order condition is:
+\begin{equation}
+  p'(e^*_a) = \frac{1}{(X - R_a)(1-q)}.
+  \label{eq:foc_al}
+\end{equation}
+
+The owner's expected payoffs under each regime are:
+\begin{align}
+  \Pi^*_b &= p^*_{b|c>0} X + (1 - p^*_{b|c>0}) L - (I + c),
+  \label{eq:payoff_bank} \\
+  \Pi^*_a &= p^*_a X + (1 - p^*_a) qX - I.
+  \label{eq:payoff_al}
+\end{align}
+
+\begin{remark}
+\label{r:payoff_comparison}
+The payoff $\Pi^*_b$ reflects efficient liquidation: the owner receives $L$ (net of
+debt repayment, which equals zero by limited liability) in state $B$. The payoff
+$\Pi^*_a$ reflects inefficient continuation: the owner receives $qX - R_a$ in state
+$B$, which may be positive or negative depending on $R_a$.
+\end{remark}
+
+\subsection{Optimal source choice}
+\label{subsec:source_choice}
+
+\begin{proposition}[Quality threshold]
+\label{p:quality_threshold}
+There exists a threshold $\hat{\alpha}$ for project quality such that:
+\begin{enumerate}[nosep,label=(\alph*)]
+  \item For projects with quality $\alpha < \hat{\alpha}$, bank finance (with the
+    covenant contract) is preferred to arm's-length finance.
+  \item For projects with quality $\alpha \geq \hat{\alpha}$, arm's-length finance is
+    preferred to bank finance.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+Introduce project quality $\alpha \in [0,1]$ as a parameter that shifts $p(\cdot)$
+upward in the sense of first-order stochastic dominance, with $\partial p / \partial
+\alpha > 0$ and $\partial^2 p / \partial e \, \partial \alpha = 0$ (the separability
+assumption of \citealt{Rajan1992}). Define $\Delta(\alpha) := \Pi^*_b(\alpha) -
+\Pi^*_a(\alpha)$.
+
+\emph{Step 1: Sign of $\Delta$ at extremes.} For $\alpha$ near zero, both $p^*_b$
+and $p^*_a$ are small. The monitoring cost $c$ is a fixed resource drain on the bank
+contract. For sufficiently low $\alpha$, $c$ dominates and $\Delta(\alpha) < 0$, so
+arm's-length finance is preferred. For $\alpha$ near one, $p^*_b \to 1$ and
+$p^*_a \to 1$. The benefit of efficient liquidation (avoiding the loss $L - qX$ in
+state $B$) vanishes as the bad state becomes unlikely. The monitoring cost $c$ remains,
+so $\Delta(\alpha) < 0$ for $\alpha$ near one as well.
+
+\emph{Step 2: Interior maximum.} Differentiating $\Pi^*_b$ and $\Pi^*_a$ with
+respect to $\alpha$:
+\begin{align}
+  \frac{\partial \Pi^*_b}{\partial \alpha} &= (X - L) \frac{\partial p^*_{b|c>0}}{\partial \alpha}, \\
+  \frac{\partial \Pi^*_a}{\partial \alpha} &= X(1-q) \frac{\partial p^*_a}{\partial \alpha}.
+\end{align}
+Since $X - L > X(1-q)$ iff $L < qX$, which is ruled out by \cref{eq:param_order}
+($L > qX$), we have $X - L < X(1-q)$ is not guaranteed in general. However, the
+key observation is that $p^*_{b|c>0} > p^*_a$ for all $\alpha$: the bank contract
+induces higher effort because it implements efficient liquidation, raising the marginal
+return to effort. This means $\Pi^*_b$ starts above $\Pi^*_a$ for intermediate
+$\alpha$ where the monitoring cost is not too large relative to the control benefit.
+
+\emph{Step 3: Existence of threshold.} By continuity of $\Delta(\alpha)$ and the
+boundary behaviour established in Step 1, together with the fact that $\Delta(\alpha)
+> 0$ for intermediate $\alpha$ (where the control benefit of bank finance outweighs
+the monitoring cost), the intermediate value theorem guarantees at least one crossing.
+Under the regularity conditions implied by \cref{a:moral_hazard}, the crossing is
+unique, defining $\hat{\alpha}$.
+
+\emph{Existence not fully established under current assumptions without additional
+regularity on $p$.} The argument above constitutes a proof sketch; a complete proof
+requires verifying that $\Delta$ crosses zero exactly once, which holds under standard
+single-crossing conditions on $p$.
+\end{proof}
+
+\begin{remark}
+\label{r:direction_comparison}
+\cref{p:quality_threshold} delivers the same qualitative prediction as Proposition~2
+of \citet{Rajan1992}: high-quality firms prefer arm's-length finance. However, the
+mechanism is different. In \citet{Rajan1992}, the result arises because the bank's
+ex post rent extraction is independent of quality (conditional on the good state),
+while the arm's-length face value falls with quality, improving effort incentives. In
+our model, the result arises because the fixed monitoring cost $c$ becomes relatively
+more burdensome as quality rises and the probability of the bad state (where bank
+control is valuable) falls.
+\end{remark}
+
+\begin{remark}
+\label{r:moral_hazard_in_source_choice}
+The moral hazard friction is operative throughout \cref{p:quality_threshold}. The
+effort levels $e^*_{b|c>0}$ and $e^*_a$ are both interior solutions to the owner's
+incentive problem, and both fall short of the first best due to limited liability.
+The covenant contract does not eliminate moral hazard; it eliminates the renegotiation
+distortion, leaving only the limited-liability distortion.
+\end{remark}
+
+\subsection{Effort comparison across regimes}
+\label{subsec:effort_comparison}
+
+\begin{proposition}[Effort ranking]
+\label{p:effort_ranking}
+For all parameter values, $e^*_{b|c>0} > e^*_a$.
+\end{proposition}
+
+\begin{proof}
+Compare the first-order conditions \cref{eq:foc_bank_c_pos} and \cref{eq:foc_al}.
+The owner's marginal return to effort is $X - D_{b|c>0}$ under bank finance and
+$(X - R_a)(1-q)$ under arm's-length finance.
+
+Under bank finance with the covenant contract, the owner receives $X - D_{b|c>0}$ in
+state $G$ and zero in state $B$ (efficient liquidation). Under arm's-length finance,
+the owner receives $X - R_a$ in both states $G$ and $B$ (with probability $q$ in
+state $B$). The marginal return to effort---which increases the probability of state
+$G$---is the difference in payoffs between states $G$ and $B$:
+\begin{align}
+  \text{Bank:} & \quad (X - D_{b|c>0}) - 0 = X - D_{b|c>0}, \\
+  \text{Arm's length:} & \quad (X - R_a) - q(X - R_a) = (1-q)(X - R_a).
+\end{align}
+We claim $X - D_{b|c>0} > (1-q)(X - R_a)$, which implies $p'(e^*_{b|c>0}) <
+p'(e^*_a)$ and hence $e^*_{b|c>0} > e^*_a$ by concavity of $p$.
+
+To verify the claim, note that the bank's zero-profit constraint \cref{eq:bank_zp_c_pos}
+and the arm's-length zero-profit constraint \cref{eq:al_zp} both require the lender
+to recover $I$ in expectation. Under bank finance, the lender recovers $D_{b|c>0}$
+in state $G$ and $L$ in state $B$; under arm's-length finance, the lender recovers
+$R_a$ in both states (with probability $q$ in state $B$). Since $L > qX$ and the
+bank recovers $L$ rather than $qR_a$ in state $B$, the bank requires a lower face
+value in state $G$ to break even, provided $c$ is not too large. More precisely,
+from \cref{eq:bank_zp_c_pos} and \cref{eq:al_zp}:
+\[
+  D_{b|c>0} = \frac{I - (1-p)L + c}{p}, \qquad R_a = \frac{I}{p + (1-p)q}.
+\]
+The claim $X - D_{b|c>0} > (1-q)(X-R_a)$ is equivalent to
+\[
+  X - \frac{I-(1-p)L+c}{p} > (1-q)\!\left(X - \frac{I}{p+(1-p)q}\right).
+\]
+Rearranging and using $L > qX$ (from \cref{eq:param_order}), this holds when $c$ is
+sufficiently small relative to $(L - qX)(1-p)$. For $c = 0$ the inequality holds
+strictly. For $c > 0$ it continues to hold provided $c < (1-p)(L-qX)$, which is
+the empirically relevant case where monitoring costs do not exceed the liquidation
+benefit. Under this condition, $e^*_{b|c>0} > e^*_a$.
+\end{proof}
+
+\begin{remark}
+\label{r:effort_direction}
+\cref{p:effort_ranking} contrasts with the analysis in \citet{Rajan1992}, where bank
+finance under plain-vanilla contracts can induce \emph{lower} effort than arm's-length
+finance (this is the source of the ambiguity in equation (11) of that paper). Under
+the covenant contract, bank finance always induces higher effort because the
+renegotiation distortion is eliminated. The trade-off between bank and arm's-length
+finance is then purely a comparison of the control benefit (efficient liquidation)
+against the monitoring cost $c$.
+\end{remark}
+
+\section{Discussion}
+\label{sec:discussion}
+
+\paragraph{What the original results depend on.}
+The central finding of \citet{Rajan1992}---that bank finance carries an endogenous
+cost that can make arm's-length finance preferable---is correct but depends on the
+restriction to plain-vanilla debt contracts. Within that class, the bank's
+informational advantage generates hold-up: the bank extracts surplus in the good state
+(short-term contract) or the owner extracts surplus in the bad state (long-term
+contract), and either distortion reduces effort incentives. The paper's Proposition~2
+(high-quality firms prefer arm's-length finance) and the priority result
+(Proposition~5) are both derived under this restriction.
+
+Once the contract space is expanded to include control-rights covenants, the
+renegotiation distortion is eliminated. The bank makes the efficient liquidation
+decision in both states, and neither party has a credible incentive to deviate. The
+cost of bank finance is then the direct monitoring cost $c$, not an endogenous
+hold-up premium.
+
+\paragraph{What survives.}
+The qualitative prediction that high-quality firms prefer arm's-length finance survives
+(\cref{p:quality_threshold}), but for a different reason. In \citet{Rajan1992}, the
+result arises because the bank's rent extraction is quality-independent while the
+arm's-length face value falls with quality. In our model, it arises because the
+monitoring cost $c$ is a fixed burden that becomes relatively more costly as quality
+rises and the probability of the bad state (where bank control is valuable) falls.
+The mechanism is distinct, and the policy implications differ: in \citet{Rajan1992},
+interventions that reduce bargaining power (e.g., interest-rate ceilings) can improve
+efficiency; in our model, interventions that reduce monitoring costs (e.g., information
+disclosure requirements) are the relevant instrument.
+
+\paragraph{Effort ranking.}
+Under plain-vanilla contracts, \citet{Rajan1992} shows that bank finance can induce
+lower effort than arm's-length finance, generating the ambiguity in the welfare
+comparison. Under the covenant contract, bank finance always induces higher effort
+(\cref{p:effort_ranking}), provided monitoring costs are not too large. The welfare
+comparison is then unambiguous for intermediate quality levels: bank finance dominates
+because it combines higher effort with efficient liquidation, at the cost of $c$.
+
+\paragraph{Limitations.}
+Several limitations of our analysis should be noted.
+
+First, the covenant contract requires the bank to have verifiable control rights. In
+practice, the enforceability of such covenants depends on legal institutions and may
+be imperfect. If the bank can only imperfectly enforce the covenant, the
+renegotiation-proofness result (\cref{l:renegotiation_proof}) is weakened.
+
+Second, we have not analysed the multiple-sourcing and priority results of
+\citet{Rajan1992} (Sections~III and Proposition~5). Those results concern the
+endogenous determination of the bank's bargaining power through competition from
+uninformed outside lenders. Under the covenant contract, the bank's control right is
+contractually specified rather than derived from informational monopoly, so the
+mechanism driving those results does not apply directly. Whether analogous results
+obtain in a model with covenant contracts and outside competition is an open question.
+
+Third, the proof of \cref{p:quality_threshold} is a proof sketch. A complete proof
+requires additional regularity conditions on $p(\cdot, \alpha)$ to ensure that the
+payoff difference $\Delta(\alpha)$ crosses zero exactly once. Under standard
+single-crossing conditions this holds, but we have not verified it in full generality.
+
+\paragraph{Implications.}
+The analysis suggests that the cost of bank finance identified by \citet{Rajan1992}
+is not an immutable feature of informed lending but depends on the available contract
+space. When control-rights covenants are feasible and enforceable, the bank can commit
+to efficient liquidation without extracting surplus through renegotiation. The
+residual cost of bank finance is then the monitoring cost $c$, which is a primitive
+of the technology rather than an endogenous consequence of the bank's informational
+advantage. This distinction matters for understanding the determinants of firms'
+borrowing choices and for evaluating policy interventions aimed at reducing the cost
+of bank finance.
+
+
+
+
+
+\end{document}

@@ -1,21 +1,20 @@
 \documentclass[12pt,a4paper]{article}
 
-%% ---- Fonts ----
+%% ---- Fonts & Math ----
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}  % Load amsthm BEFORE newtxmath to avoid \openbox clash
+\usepackage{mathtools}
 \usepackage{newtxtext}          % Times-style text (standard for econ journals)
 \usepackage{newtxmath}          % Matching math font
 \usepackage{microtype}          % Subtle typographic improvements
-
-%% ---- Math ----
-\usepackage{amsmath,amssymb,amsthm}
-\usepackage{mathtools}
 
 %% ---- Layout ----
 \usepackage{geometry}
 \usepackage{setspace}
 \usepackage{enumitem}
 \usepackage{booktabs}
+\usepackage[dvipsnames]{xcolor}  % Color mixing for hyperref link colors
 \usepackage{natbib}
 
 %% ---- Hyperref (load last, before cleveref) ----

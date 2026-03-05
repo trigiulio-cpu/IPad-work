@@ -180,10 +180,29 @@ def build_critique_paper_prompt(
         Any extra guidance from the user.
     """
     sections = [
-        f"You are given an original paper and a critique of that paper.",
+        f"You are given an original paper and the author's notes about that paper.",
         f"Your task: write a short, self-contained theory paper in LaTeX "
-        f"(~{page_target} pages of body content) that formalises the critique "
-        f"into a rigorous contribution.",
+        f"(~{page_target} pages of body content) that develops the ideas in "
+        f"the author's notes into a rigorous, standalone contribution.",
+        "",
+        "## CRITICAL: Voice and Framing",
+        "The output paper must be written as an INDEPENDENT, SELF-CONTAINED "
+        "contribution. It must NEVER refer to itself as a ``critique'' or "
+        "``response'' or ``audit'' of another paper. It must NEVER use phrases "
+        "like ``the critique argues'' or ``this paper audits the critique.'' "
+        "The author's notes are YOUR notes — they are the seed of YOUR paper's "
+        "contribution. Present all arguments as your own original analysis.",
+        "",
+        "Instead of ``the critique shows X,'' write ``we show X.'' "
+        "Instead of ``the critique is partially correct,'' write "
+        "``the original paper's result depends on an implicit restriction "
+        "of the contract space; once this restriction is relaxed, ...'' "
+        "The paper should read as if the author independently identified "
+        "the issue and developed the formal analysis.",
+        "",
+        "You may (and should) reference the original paper by its authors' "
+        "names (e.g., ``Rajan (1992) restricts attention to...''). But the "
+        "word ``critique'' must NEVER appear in the output.",
         "",
         "## STEP 0: Model Inventory (do this mentally before writing)",
         "Before writing anything, you MUST identify every economically "
@@ -198,7 +217,7 @@ def build_critique_paper_prompt(
         "Your model section MUST preserve ALL of these features. If the "
         "original paper has moral hazard, your model must have moral hazard. "
         "If it has adverse selection, yours must too. You may NEVER silently "
-        "drop a friction — doing so makes the critique vacuous because it "
+        "drop a friction — doing so makes your analysis vacuous because it "
         "attacks a simpler problem than the one the original paper solves.",
         "",
         "If your proposed mechanism resolves one friction, you must "
@@ -210,7 +229,7 @@ def build_critique_paper_prompt(
         "constraint from the original paper. In the Model section, explicitly "
         "flag which features come from the original paper and which are "
         "new. If you modify the contract space, keep everything else fixed.",
-        "2. **Logical audit** — For every argument in the critique, check "
+        "2. **Logical audit** — For every argument in the notes, check "
         "whether it is logically sound IN THE FULL MODEL (with all original "
         "frictions present). If an argument only works in a simplified "
         "version that drops frictions, say so.",
@@ -224,9 +243,9 @@ def build_critique_paper_prompt(
         "strategic type misreporting.",
         "5. **Exposition** — Write clear, precise prose connecting the "
         "formal results. No fluff, no hand-waving.",
-        "6. **Honesty** — If the critique is wrong on a point, say so "
+        "6. **Honesty** — If the notes are wrong on a point, correct them "
         "and prove the correct claim. If the original paper is right "
-        "and the critique is mistaken, acknowledge it. If your mechanism "
+        "and the notes are mistaken, acknowledge it. If your mechanism "
         "fails in the full model, acknowledge that too.",
         "",
         "## Original Paper",
@@ -234,10 +253,10 @@ def build_critique_paper_prompt(
         paper_text,
         "--- END PAPER ---",
         "",
-        "## Critique",
-        "--- BEGIN CRITIQUE ---",
+        "## Author's Notes",
+        "--- BEGIN NOTES ---",
         critique_text,
-        "--- END CRITIQUE ---",
+        "--- END NOTES ---",
     ]
 
     if additional_instructions:
@@ -252,7 +271,8 @@ def build_critique_paper_prompt(
         "## Structure Requirements",
         "The output paper MUST use exactly these sections, in this order:",
         "1. \\section{Introduction} — state what the original paper claims, "
-        "what the critique argues, and what this paper establishes. "
+        "identify the gap or restriction this paper addresses, and "
+        "summarise what this paper establishes. "
         "If the contribution has multiple parts, list them with "
         "\\begin{enumerate}[nosep]. No fluff.",
         "2. \\section{Model} — the formal environment. This section must "
@@ -266,14 +286,14 @@ def build_critique_paper_prompt(
         "The ONLY difference between the two should be the contract space — "
         "everything else (agents, frictions, information, timing) must be "
         "identical.",
-        "3. \\section{Analysis} — formal propositions with proofs addressing "
-        "each point of the critique. Use \\subsection{} to organise by "
-        "claim or topic. For each result, verify incentive compatibility "
-        "in the presence of ALL frictions from the original model. "
-        "Intersperse remarks for interpretation.",
-        "4. \\section{Discussion} — summarise which parts of the critique "
-        "survive, which fail, and what the net conclusion is. "
-        "Discuss policy implications if relevant.",
+        "3. \\section{Analysis} — formal propositions with proofs. "
+        "Use \\subsection{} to organise by claim or topic. For each result, "
+        "verify incentive compatibility in the presence of ALL frictions "
+        "from the original model. Intersperse remarks for interpretation.",
+        "4. \\section{Discussion} — summarise the results, their "
+        "limitations, and their implications. Discuss what the original "
+        "paper's results depend on and what survives under the expanded "
+        "contract space. Discuss policy implications if relevant.",
         "5. (Optional) \\appendix with longer proofs if needed.",
         "",
         "Do NOT add other top-level sections. Do NOT rename these sections.",
