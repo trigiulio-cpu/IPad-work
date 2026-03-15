@@ -1,0 +1,879 @@
+% tikz-scenes.sty — Reusable TikZ scene/background macros
+% Rochester and Cambridge landmarks for the children's book
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tikz-scenes}[2026/03/15 Scene background macros]
+
+\RequirePackage{tikz}
+\RequirePackage{xcolor}
+
+\usetikzlibrary{calc, decorations.pathmorphing, patterns}
+
+%% ========================================================
+%% SHARED COLORS
+%% ========================================================
+\definecolor{skyBlue}{RGB}{135, 190, 240}
+\definecolor{skyLight}{RGB}{180, 215, 250}
+\definecolor{skyDawn}{RGB}{250, 200, 140}
+\definecolor{skySunset}{RGB}{240, 150, 100}
+\definecolor{skyNight}{RGB}{20, 25, 60}
+\definecolor{skyNightMid}{RGB}{35, 45, 90}
+\definecolor{grassGreen}{RGB}{90, 170, 80}
+\definecolor{grassDark}{RGB}{60, 130, 55}
+\definecolor{waterBlue}{RGB}{80, 150, 210}
+\definecolor{waterLight}{RGB}{140, 195, 235}
+\definecolor{waterDark}{RGB}{50, 110, 170}
+\definecolor{stoneGray}{RGB}{160, 160, 155}
+\definecolor{stoneDark}{RGB}{120, 120, 115}
+\definecolor{stoneLt}{RGB}{195, 195, 190}
+\definecolor{brickRed}{RGB}{160, 75, 60}
+\definecolor{roofDark}{RGB}{80, 70, 65}
+\definecolor{snowWhite}{RGB}{240, 245, 250}
+\definecolor{snowShadow}{RGB}{200, 215, 230}
+\definecolor{woodBrown}{RGB}{140, 100, 60}
+\definecolor{woodDark}{RGB}{100, 70, 40}
+\definecolor{treeTrunk}{RGB}{100, 75, 50}
+\definecolor{leafGreen}{RGB}{70, 150, 60}
+\definecolor{leafDark}{RGB}{45, 110, 40}
+\definecolor{willowGreen}{RGB}{120, 180, 90}
+
+%% ========================================================
+%% UTILITY: Simple tree
+%% ========================================================
+\newcommand{\drawTree}[3]{%
+  % #1=x, #2=y, #3=scale
+  \begin{scope}[shift={(#1,#2)}, scale=#3]
+    \fill[treeTrunk] (-0.08, 0) rectangle (0.08, 0.5);
+    \fill[leafGreen] (0, 0.8) circle (0.35);
+    \fill[leafDark] (0.05, 0.7) circle (0.25);
+  \end{scope}
+}
+
+%% Willow tree for Cambridge
+\newcommand{\drawWillow}[3]{%
+  \begin{scope}[shift={(#1,#2)}, scale=#3]
+    \fill[treeTrunk] (-0.1, 0) rectangle (0.1, 0.8);
+    \fill[willowGreen] (0, 1.1) circle (0.5);
+    % Drooping branches
+    \foreach \wx in {-0.4, -0.2, 0.0, 0.2, 0.4} {
+      \draw[willowGreen, line width=1.5pt]
+        (\wx, 0.9) .. controls (\wx-0.1, 0.3) and (\wx+0.05, 0.1) .. (\wx, -0.1);
+    }
+  \end{scope}
+}
+
+%% Simple cloud
+\newcommand{\drawCloud}[3]{%
+  \begin{scope}[shift={(#1,#2)}, scale=#3]
+    \fill[white, opacity=0.9] (0,0) circle (0.3);
+    \fill[white, opacity=0.9] (0.25, 0.1) circle (0.35);
+    \fill[white, opacity=0.9] (0.55, 0.05) circle (0.28);
+    \fill[white, opacity=0.9] (0.15, -0.05) circle (0.25);
+  \end{scope}
+}
+
+%% ========================================================
+%% ROCHESTER SCENES
+%% ========================================================
+
+%% --- HIGH FALLS ---
+\newcommand{\drawHighFalls}{%
+  % Sky
+  \fill[skyBlue] (0,0) rectangle (8,8);
+  \fill[skyLight] (0,0) rectangle (8,3);
+  % Clouds
+  \drawCloud{1.5}{6.5}{1.2}
+  \drawCloud{5.0}{7.0}{1.0}
+  % Cliff walls
+  \fill[stoneDark] (0, 0) rectangle (2.5, 5.5);
+  \fill[stoneGray] (5.5, 0) rectangle (8, 5.5);
+  % Cliff texture
+  \foreach \cy in {1, 2, 3, 4, 5} {
+    \draw[stoneLt, line width=0.3pt] (0.2, \cy) -- (2.3, \cy);
+    \draw[stoneLt, line width=0.3pt] (5.7, \cy) -- (7.8, \cy);
+  }
+  % Waterfall
+  \fill[waterLight, opacity=0.8] (2.5, 0) rectangle (5.5, 5.5);
+  % Falling water streaks
+  \foreach \wx in {2.8, 3.2, 3.6, 4.0, 4.4, 4.8, 5.2} {
+    \draw[white, line width=2pt, opacity=0.6]
+      (\wx, 5.5) -- (\wx + 0.1, 0.5);
+  }
+  % Mist at bottom
+  \fill[white, opacity=0.5] (1.5, 0) ellipse (3.5 and 1.2);
+  \fill[white, opacity=0.3] (4.0, 0.3) ellipse (2.5 and 0.8);
+  % Water splash
+  \foreach \sx in {2.5, 3.0, 3.5, 4.0, 4.5, 5.0} {
+    \fill[white, opacity=0.7] (\sx, 0.2) circle (0.15);
+  }
+  % Bridge at top
+  \fill[stoneDark] (2.0, 5.3) rectangle (6.0, 5.7);
+  \fill[stoneGray] (2.0, 5.7) rectangle (6.0, 5.9);
+  % Railing
+  \foreach \rx in {2.2, 2.8, 3.4, 4.0, 4.6, 5.2, 5.8} {
+    \fill[stoneDark] (\rx, 5.9) rectangle (\rx+0.1, 6.3);
+  }
+  \fill[stoneDark] (2.0, 6.3) rectangle (6.0, 6.45);
+  % Trees on clifftops
+  \drawTree{0.5}{5.5}{0.8}
+  \drawTree{1.5}{5.5}{1.0}
+  \drawTree{6.5}{5.5}{0.9}
+  \drawTree{7.3}{5.5}{0.7}
+}
+
+%% --- STRONG MUSEUM (National Museum of Play) ---
+\newcommand{\drawStrongMuseum}{%
+  % Sky
+  \fill[skyBlue] (0,0) rectangle (8,8);
+  \drawCloud{1}{6.8}{1.0}
+  \drawCloud{5.5}{7.2}{0.8}
+  % Ground
+  \fill[grassGreen] (0, 0) rectangle (8, 1.5);
+  % Museum building — modern style with colorful panels
+  \fill[stoneLt] (1.0, 1.5) rectangle (7.0, 5.5);
+  % Colorful facade panels (playful museum)
+  \fill[red!60] (1.2, 3.5) rectangle (2.5, 5.3);
+  \fill[blue!50] (2.7, 3.5) rectangle (4.0, 5.3);
+  \fill[green!50] (4.2, 3.5) rectangle (5.5, 5.3);
+  \fill[yellow!60] (5.7, 3.5) rectangle (7.0, 5.3);
+  % Windows in colored panels
+  \foreach \wx in {1.6, 3.1, 4.6, 6.1} {
+    \fill[white] (\wx, 4.0) rectangle (\wx+0.5, 4.8);
+    \fill[skyLight] (\wx+0.05, 4.05) rectangle (\wx+0.45, 4.75);
+  }
+  % Entrance
+  \fill[stoneDark] (3.2, 1.5) rectangle (4.8, 3.3);
+  \fill[white] (3.4, 1.5) rectangle (4.6, 3.1);
+  % Door
+  \fill[brickRed] (3.6, 1.5) rectangle (4.4, 2.8);
+  \fill[yellow!80!black] (4.2, 2.1) circle (0.06);
+  % "STRONG" sign
+  \node[white, font=\sffamily\bfseries\small] at (4.0, 5.0) {PLAY};
+  % Butterfly decoration on building
+  \fill[orange!70] (2.0, 5.0) -- (1.8, 5.3) -- (2.0, 5.15) -- (2.2, 5.3) -- cycle;
+  % Path to entrance
+  \fill[stoneGray] (3.5, 0) -- (4.5, 0) -- (4.6, 1.5) -- (3.4, 1.5) -- cycle;
+  % Flowers along path
+  \fill[red] (2.0, 1.6) circle (0.12); \fill[grassDark] (2.0, 1.3) rectangle (2.04, 1.6);
+  \fill[yellow] (2.5, 1.6) circle (0.12); \fill[grassDark] (2.5, 1.3) rectangle (2.54, 1.6);
+  \fill[purple] (5.5, 1.6) circle (0.12); \fill[grassDark] (5.5, 1.3) rectangle (5.54, 1.6);
+  \fill[red] (6.0, 1.6) circle (0.12); \fill[grassDark] (6.0, 1.3) rectangle (6.04, 1.6);
+  \fill[orange] (6.5, 1.6) circle (0.12); \fill[grassDark] (6.5, 1.3) rectangle (6.54, 1.6);
+}
+
+%% --- ROCHESTER SKYLINE (with Kodak Tower) ---
+\newcommand{\drawRochesterSkyline}{%
+  % Sunset sky
+  \fill[skySunset] (0, 0) rectangle (8, 8);
+  \fill[skyDawn] (0, 4) rectangle (8, 8);
+  \fill[skyBlue!30!skyDawn] (0, 6) rectangle (8, 8);
+  % Sun
+  \fill[yellow!80, opacity=0.8] (6.5, 4.5) circle (0.8);
+  \fill[yellow!50, opacity=0.3] (6.5, 4.5) circle (1.2);
+  % Buildings silhouette
+  % Kodak Tower (tallest, center-left)
+  \fill[stoneDark!80!black] (2.0, 1.5) rectangle (3.0, 6.0);
+  \fill[stoneDark!60!black] (2.2, 6.0) rectangle (2.8, 6.5);
+  \fill[stoneDark!50!black] (2.35, 6.5) rectangle (2.65, 6.8);
+  % Windows on Kodak Tower
+  \foreach \wy in {2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5} {
+    \foreach \wxx in {2.2, 2.5, 2.8} {
+      \fill[yellow!60, opacity=0.5] (\wxx-0.08, \wy) rectangle (\wxx+0.08, \wy+0.3);
+    }
+  }
+  % Other buildings
+  \fill[stoneDark!70!black] (0.5, 1.5) rectangle (1.8, 4.0);
+  \fill[stoneDark!75!black] (3.2, 1.5) rectangle (4.2, 4.5);
+  \fill[stoneDark!65!black] (4.4, 1.5) rectangle (5.2, 3.8);
+  \fill[stoneDark!80!black] (5.4, 1.5) rectangle (6.3, 4.8);
+  \fill[stoneDark!70!black] (6.5, 1.5) rectangle (7.5, 3.5);
+  % Windows on other buildings
+  \foreach \bx/\bw/\bh in {1.0/1.5/3.8, 3.5/4.0/4.3, 4.6/5.0/3.6, 5.6/6.1/4.6, 6.8/7.3/3.3} {
+    \foreach \wy in {2.0, 2.6, 3.2} {
+      \fill[yellow!50, opacity=0.4] (\bx, \wy) rectangle (\bx+0.15, \wy+0.3);
+    }
+  }
+  % Ground / river
+  \fill[grassDark] (0, 0) rectangle (8, 1.5);
+  \fill[waterDark, opacity=0.6] (0, 0) rectangle (8, 0.8);
+  % Reflection
+  \fill[yellow!30, opacity=0.2] (2.0, 0) rectangle (3.0, 0.8);
+}
+
+%% --- GENESEE RIVER ---
+\newcommand{\drawGeneseeRiver}{%
+  % Sky
+  \fill[skyBlue] (0,0) rectangle (8,8);
+  \fill[skyLight] (0, 5) rectangle (8, 8);
+  \drawCloud{1.0}{7.0}{1.0}
+  \drawCloud{4.5}{6.5}{1.3}
+  \drawCloud{6.5}{7.2}{0.7}
+  % Distant hills
+  \fill[grassDark!70!skyBlue] (0, 4.5) .. controls (2, 5.2) and (4, 4.8) .. (6, 5.0)
+    .. controls (7, 5.1) and (7.5, 4.9) .. (8, 5.0) -- (8, 4) -- (0, 4) -- cycle;
+  % Riverbanks
+  \fill[grassGreen] (0, 0) .. controls (1, 2.5) and (2, 3.0) .. (3, 2.8)
+    .. controls (4, 2.5) and (4.5, 2.0) .. (4, 1.5) -- (0, 1.5) -- cycle;
+  \fill[grassGreen] (8, 0) .. controls (7, 2.5) and (6, 3.0) .. (5, 2.8)
+    .. controls (4.5, 2.5) and (4, 2.0) .. (4.5, 1.5) -- (8, 1.5) -- cycle;
+  % River
+  \fill[waterBlue] (3, 2.8) .. controls (3.5, 3.5) and (4, 4.0) .. (4, 5.0)
+    -- (4.5, 5.0) .. controls (4.5, 4.0) and (5, 3.5) .. (5, 2.8)
+    -- (4.5, 1.5) -- (4, 1.5) -- cycle;
+  % Water ripples
+  \foreach \ry in {2.0, 2.8, 3.5, 4.2} {
+    \draw[waterLight, line width=0.8pt] (3.5, \ry) .. controls (4.0, \ry+0.1) .. (4.5, \ry);
+  }
+  % Trees along banks
+  \drawTree{0.5}{2.0}{0.7}
+  \drawTree{1.5}{2.5}{0.9}
+  \drawTree{2.3}{2.7}{0.8}
+  \drawTree{5.8}{2.7}{0.8}
+  \drawTree{6.5}{2.5}{0.9}
+  \drawTree{7.3}{2.0}{0.7}
+  % Autumn leaves (scattered dots)
+  \fill[orange] (1, 3.5) circle (0.06);
+  \fill[red] (1.5, 4) circle (0.06);
+  \fill[yellow] (2, 3.2) circle (0.06);
+  \fill[orange] (6, 3.5) circle (0.06);
+  \fill[red] (6.8, 4) circle (0.06);
+  \fill[yellow] (7, 3.0) circle (0.06);
+  % Path along river
+  \fill[stoneGray!50!grassGreen] (0, 1.5) .. controls (1.5, 2.0) and (2.5, 2.3) .. (3, 2.3)
+    -- (3, 2.0) .. controls (2.5, 2.0) and (1.5, 1.7) .. (0, 1.2) -- cycle;
+}
+
+%% --- SNOW SCENE ---
+\newcommand{\drawSnowScene}{%
+  % Winter sky
+  \fill[skyLight!80!white] (0,0) rectangle (8,8);
+  % Snowflakes
+  \foreach \sx/\sy in {0.5/7, 1.2/6.5, 2/7.3, 2.8/6, 3.5/7.5, 4.2/6.8, 5/7.2, 5.8/6.3, 6.5/7, 7.2/6.6, 1/5.5, 3/5, 5/5.5, 7/5, 0.8/4.5, 4/4, 6/4.5} {
+    \fill[white] (\sx, \sy) circle (0.05);
+    \draw[white, line width=0.3pt] (\sx-0.07, \sy) -- (\sx+0.07, \sy);
+    \draw[white, line width=0.3pt] (\sx, \sy-0.07) -- (\sx, \sy+0.07);
+  }
+  % Snowy ground
+  \fill[snowWhite] (0,0) rectangle (8, 2.5);
+  \fill[snowShadow] (0, 0) .. controls (2, 0.3) and (4, 0.1) .. (6, 0.3)
+    .. controls (7, 0.2) and (7.5, 0.4) .. (8, 0.2) -- (8, 0) -- cycle;
+  % Snow hills
+  \fill[snowWhite] (0, 2.5) .. controls (2, 3.2) and (3, 2.8) .. (4, 3.0)
+    .. controls (5, 3.2) and (6, 2.7) .. (8, 3.0) -- (8, 2.5) -- cycle;
+  % Bare trees
+  \fill[treeTrunk] (1.0, 2.5) rectangle (1.15, 4.0);
+  \draw[treeTrunk, line width=1.5pt] (1.07, 3.5) -- (0.7, 4.2);
+  \draw[treeTrunk, line width=1.5pt] (1.07, 3.8) -- (1.5, 4.5);
+  \draw[treeTrunk, line width=1pt] (1.07, 3.2) -- (0.8, 3.6);
+  \fill[treeTrunk] (6.5, 2.7) rectangle (6.65, 4.3);
+  \draw[treeTrunk, line width=1.5pt] (6.57, 3.8) -- (6.2, 4.5);
+  \draw[treeTrunk, line width=1.5pt] (6.57, 4.0) -- (7.0, 4.6);
+  \draw[treeTrunk, line width=1pt] (6.57, 3.4) -- (6.9, 3.8);
+  % Snow on branches
+  \fill[snowWhite] (0.65, 4.15) ellipse (0.15 and 0.06);
+  \fill[snowWhite] (1.45, 4.45) ellipse (0.15 and 0.06);
+  \fill[snowWhite] (6.15, 4.45) ellipse (0.15 and 0.06);
+  \fill[snowWhite] (6.95, 4.55) ellipse (0.15 and 0.06);
+}
+
+%% --- COZY CAVE ---
+\newcommand{\drawCozyCave}{%
+  % Cave interior - dark background
+  \fill[stoneDark!60!black] (0,0) rectangle (8,8);
+  % Cave opening arch (lighter)
+  \fill[skyLight] (0, 0) .. controls (0, 6) and (3, 8) .. (4, 8)
+    .. controls (5, 8) and (8, 6) .. (8, 0) -- cycle;
+  % Cave walls
+  \fill[stoneDark] (0, 0) -- (0, 7) .. controls (1, 7.5) and (2, 7.8) .. (2.5, 7)
+    -- (2.5, 0) -- cycle;
+  \fill[stoneDark] (8, 0) -- (8, 7) .. controls (7, 7.5) and (6, 7.8) .. (5.5, 7)
+    -- (5.5, 0) -- cycle;
+  % Cave floor
+  \fill[stoneDark!80!black] (0, 0) rectangle (8, 1.5);
+  % Sparkly rocks
+  \fill[yellow] (1, 0.5) circle (0.08); \fill[yellow, opacity=0.5] (1, 0.5) circle (0.12);
+  \fill[yellow] (1.5, 0.3) circle (0.08); \fill[yellow, opacity=0.5] (1.5, 0.3) circle (0.12);
+  \fill[yellow] (0.8, 1.0) circle (0.08); \fill[yellow, opacity=0.5] (0.8, 1.0) circle (0.12);
+  \fill[yellow] (6.5, 0.4) circle (0.08); \fill[yellow, opacity=0.5] (6.5, 0.4) circle (0.12);
+  \fill[yellow] (7, 0.8) circle (0.08); \fill[yellow, opacity=0.5] (7, 0.8) circle (0.12);
+  \fill[yellow] (6.8, 0.2) circle (0.08); \fill[yellow, opacity=0.5] (6.8, 0.2) circle (0.12);
+  % View through cave opening - sky and river
+  \fill[grassGreen] (2.5, 0) rectangle (5.5, 2.0);
+  \fill[waterBlue] (3.0, 0.5) .. controls (3.5, 0.8) and (4.5, 0.7) .. (5.0, 0.5)
+    .. controls (4.5, 0.3) and (3.5, 0.4) .. (3.0, 0.5);
+}
+
+%% --- COLORFUL GARDEN ---
+\newcommand{\drawGarden}{%
+  % Sky
+  \fill[skyBlue] (0,0) rectangle (8,8);
+  \fill[skyLight] (0, 6) rectangle (8, 8);
+  \drawCloud{2}{7}{0.8}
+  \drawCloud{6}{7.3}{1.0}
+  % Grass
+  \fill[grassGreen] (0, 0) rectangle (8, 3);
+  \fill[grassDark] (0, 0) rectangle (8, 1);
+  % Flowers - lots of them in rainbow colors (front row)
+  \foreach \fx/\fy/\fc in {0.5/2.8/red, 1.0/3.0/orange, 1.5/2.7/yellow,
+    2.0/3.1/green, 2.5/2.9/blue, 3.0/2.8/purple,
+    3.5/3.0/red, 4.0/2.7/pink, 4.5/3.1/orange,
+    5.0/2.9/yellow, 5.5/2.8/blue, 6.0/3.0/purple,
+    6.5/2.7/red, 7.0/3.1/pink, 7.5/2.9/orange} {
+    \fill[grassDark] (\fx, 2.5) rectangle (\fx+0.03, \fy);
+    \fill[\fc] (\fx, \fy) circle (0.13);
+  }
+  % More flowers in back row
+  \foreach \fx/\fy/\fc in {0.8/3.4/pink, 1.8/3.5/yellow, 2.8/3.3/red,
+    3.8/3.6/purple, 4.8/3.4/orange, 5.8/3.5/blue, 6.8/3.3/pink} {
+    \fill[grassDark] (\fx, 3.0) rectangle (\fx+0.03, \fy);
+    \fill[\fc] (\fx, \fy) circle (0.1);
+  }
+  % Butterfly
+  \fill[orange!70] (5.0, 5.0) -- (4.8, 5.3) -- (5.0, 5.15) -- (5.2, 5.3) -- cycle;
+  \fill[yellow!70] (5.0, 5.0) -- (4.85, 4.75) -- (5.0, 4.85) -- (5.15, 4.75) -- cycle;
+  \fill[black] (5.0, 5.0) circle (0.03);
+  % Fence in background
+  \foreach \fxx in {0.3, 1.1, 1.9, 2.7, 3.5, 4.3, 5.1, 5.9, 6.7, 7.5} {
+    \fill[woodBrown] (\fxx, 3.5) rectangle (\fxx+0.12, 4.5);
+    \fill[woodBrown] (\fxx-0.03, 4.3) -- (\fxx+0.06, 4.6) -- (\fxx+0.15, 4.3) -- cycle;
+  }
+  \fill[woodBrown] (0.3, 3.9) rectangle (7.6, 4.05);
+  \fill[woodBrown] (0.3, 4.2) rectangle (7.6, 4.35);
+}
+
+%% ========================================================
+%% CAMBRIDGE SCENES
+%% ========================================================
+
+%% --- KING'S COLLEGE CHAPEL ---
+\newcommand{\drawKingsCollege}{%
+  % Sky
+  \fill[skyBlue] (0,0) rectangle (8,8);
+  \fill[skyLight] (0, 5) rectangle (8, 8);
+  \drawCloud{1}{7}{1.0}
+  \drawCloud{6}{7.3}{0.8}
+  % Ground / lawn
+  \fill[grassGreen] (0, 0) rectangle (8, 2.0);
+  % Chapel building - Gothic style
+  % Main body
+  \fill[stoneLt] (1.5, 2.0) rectangle (6.5, 5.5);
+  % Buttresses
+  \foreach \bx in {1.8, 2.6, 3.4, 4.2, 5.0, 5.8} {
+    \fill[stoneGray] (\bx, 2.0) rectangle (\bx+0.2, 5.8);
+    % Pinnacles on buttresses
+    \fill[stoneGray] (\bx-0.02, 5.8) -- (\bx+0.1, 6.3) -- (\bx+0.22, 5.8) -- cycle;
+  }
+  % Gothic windows (pointed arches)
+  \foreach \wx in {2.0, 2.8, 3.6, 4.4, 5.2} {
+    \fill[skyBlue!40!white] (\wx, 2.5) rectangle (\wx+0.4, 4.8);
+    \fill[skyBlue!40!white] (\wx, 4.8) -- (\wx+0.2, 5.2) -- (\wx+0.4, 4.8) -- cycle;
+    % Window tracery (vertical line)
+    \draw[stoneLt, line width=0.5pt] (\wx+0.2, 2.5) -- (\wx+0.2, 5.1);
+  }
+  % Great west window (larger, center)
+  % Roof line
+  \fill[roofDark] (1.3, 5.5) -- (4.0, 6.8) -- (6.7, 5.5) -- cycle;
+  % Tower at corner
+  \fill[stoneLt] (1.0, 2.0) rectangle (1.8, 6.0);
+  \fill[stoneGray] (0.95, 6.0) rectangle (1.85, 6.2);
+  % Tower pinnacles
+  \fill[stoneGray] (1.0, 6.2) -- (1.15, 6.8) -- (1.3, 6.2) -- cycle;
+  \fill[stoneGray] (1.5, 6.2) -- (1.65, 6.8) -- (1.8, 6.2) -- cycle;
+  % Second tower
+  \fill[stoneLt] (6.2, 2.0) rectangle (7.0, 6.0);
+  \fill[stoneGray] (6.15, 6.0) rectangle (7.05, 6.2);
+  \fill[stoneGray] (6.2, 6.2) -- (6.35, 6.8) -- (6.5, 6.2) -- cycle;
+  \fill[stoneGray] (6.7, 6.2) -- (6.85, 6.8) -- (7.0, 6.2) -- cycle;
+  % Path to chapel
+  \fill[stoneGray!80] (3.2, 0) -- (4.8, 0) -- (4.5, 2.0) -- (3.5, 2.0) -- cycle;
+}
+
+%% --- PUNTING ON THE CAM ---
+\newcommand{\drawCamRiver}{%
+  % Sky
+  \fill[skyBlue] (0,0) rectangle (8,8);
+  \fill[skyLight] (0, 6) rectangle (8, 8);
+  \drawCloud{2}{7.2}{1.0}
+  \drawCloud{5.5}{6.8}{0.8}
+  % Riverbanks
+  \fill[grassGreen] (0, 0) rectangle (2.5, 8);
+  \fill[grassGreen] (5.5, 0) rectangle (8, 8);
+  % River
+  \fill[waterBlue] (2.5, 0) rectangle (5.5, 8);
+  % Water reflections
+  \foreach \ry in {0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5} {
+    \draw[waterLight, line width=0.8pt]
+      (2.8, \ry) .. controls (3.5, \ry+0.15) and (4.5, \ry-0.1) .. (5.2, \ry+0.05);
+  }
+  % Punt boat
+  \fill[woodBrown] (3.2, 2.5) .. controls (3.0, 2.7) and (3.0, 3.5) .. (3.2, 3.8)
+    -- (4.8, 3.8) .. controls (5.0, 3.5) and (5.0, 2.7) .. (4.8, 2.5) -- cycle;
+  \fill[woodDark] (3.2, 2.5) -- (4.8, 2.5) -- (4.6, 2.3) -- (3.4, 2.3) -- cycle;
+  % Punt pole
+  \draw[woodDark, line width=2pt] (4.5, 2.0) -- (4.7, 5.5);
+  % Cushions in punt
+  \fill[red!60] (3.5, 3.0) rectangle (4.0, 3.4);
+  \fill[blue!50] (4.0, 3.0) rectangle (4.5, 3.4);
+  % Willow trees on banks
+  \drawWillow{1.0}{3.0}{1.0}
+  \drawWillow{7.0}{4.0}{0.8}
+  % Ducks
+  \fill[yellow!80!orange] (2.8, 4.5) ellipse (0.1 and 0.07);
+  \fill[yellow!80!orange] (2.8, 4.58) circle (0.05);
+  \fill[orange] (2.72, 4.58) -- (2.65, 4.57) -- (2.72, 4.55) -- cycle;
+  % Flowers on bank
+  \fill[yellow] (0.5, 3.1) circle (0.08);
+  \fill[white] (1.5, 3.2) circle (0.08);
+  \fill[pink] (2.0, 3.0) circle (0.08);
+  \fill[yellow] (6.0, 3.15) circle (0.08);
+  \fill[white] (6.8, 3.05) circle (0.08);
+  \fill[pink] (7.5, 3.1) circle (0.08);
+}
+
+%% --- MATHEMATICAL BRIDGE ---
+\newcommand{\drawMathematicalBridge}{%
+  % Sky
+  \fill[skyBlue] (0,0) rectangle (8,8);
+  \fill[skyLight] (0, 5.5) rectangle (8, 8);
+  \drawCloud{1.5}{7}{0.9}
+  \drawCloud{5}{7.3}{1.1}
+  % River
+  \fill[waterBlue] (0, 0) rectangle (8, 3.0);
+  \foreach \ry in {0.3, 0.9, 1.5, 2.1, 2.7} {
+    \draw[waterLight, line width=0.6pt]
+      (0.5, \ry) .. controls (2, \ry+0.1) and (6, \ry-0.1) .. (7.5, \ry+0.05);
+  }
+  % Banks
+  \fill[grassGreen] (0, 3.0) rectangle (2.5, 5.5);
+  \fill[grassGreen] (5.5, 3.0) rectangle (8, 5.5);
+  % Queens' College building (left)
+  \fill[brickRed] (0, 4.0) rectangle (2.5, 7.0);
+  \foreach \wy in {4.5, 5.3, 6.1} {
+    \foreach \wx in {0.3, 0.9, 1.5, 2.1} {
+      \fill[white] (\wx, \wy) rectangle (\wx+0.3, \wy+0.5);
+      \fill[skyLight] (\wx+0.03, \wy+0.03) rectangle (\wx+0.27, \wy+0.47);
+    }
+  }
+  % Building (right bank)
+  \fill[stoneLt] (5.5, 4.0) rectangle (8, 6.5);
+  \foreach \wy in {4.5, 5.3} {
+    \foreach \wx in {5.8, 6.4, 7.0} {
+      \fill[white] (\wx, \wy) rectangle (\wx+0.3, \wy+0.5);
+    }
+  }
+  % The Mathematical Bridge - wooden arch
+  % Main arch curve
+  \draw[woodBrown, line width=3pt]
+    (2.5, 4.0) .. controls (3.5, 5.5) and (4.5, 5.5) .. (5.5, 4.0);
+  % Tangent beams (the famous mathematical pattern)
+  \foreach \t in {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9} {
+    \pgfmathsetmacro{\xa}{2.5 + 3*\t}
+    \pgfmathsetmacro{\ya}{4.0 + 1.5*sin(180*\t)}
+    \pgfmathsetmacro{\xb}{2.5 + 3*(\t+0.15)}
+    \pgfmathsetmacro{\yb}{4.0 + 1.5*sin(180*(\t+0.15))}
+    \draw[woodDark, line width=1.5pt] (\xa, \ya) -- (\xb, \yb);
+  }
+  % Cross braces
+  \foreach \t in {0.15, 0.35, 0.55, 0.75} {
+    \pgfmathsetmacro{\xa}{2.5 + 3*\t}
+    \pgfmathsetmacro{\ya}{4.0 + 1.5*sin(180*\t)}
+    \draw[woodBrown, line width=1pt] (\xa, 3.5) -- (\xa, \ya);
+  }
+  % Handrails
+  \draw[woodDark, line width=2pt]
+    (2.5, 4.5) .. controls (3.5, 5.9) and (4.5, 5.9) .. (5.5, 4.5);
+  % Railing posts
+  \foreach \t in {0.2, 0.35, 0.5, 0.65, 0.8} {
+    \pgfmathsetmacro{\xp}{2.5 + 3*\t}
+    \pgfmathsetmacro{\ylo}{4.0 + 1.5*sin(180*\t)}
+    \pgfmathsetmacro{\yhi}{4.5 + 1.4*sin(180*\t)}
+    \draw[woodDark, line width=1pt] (\xp, \ylo) -- (\xp, \yhi);
+  }
+}
+
+%% --- CAMBRIDGE MARKET SQUARE ---
+\newcommand{\drawMarketSquare}{%
+  % Sky
+  \fill[skyBlue] (0,0) rectangle (8,8);
+  \drawCloud{1}{7}{0.9}
+  \drawCloud{5.5}{7.3}{0.7}
+  % Background buildings
+  \fill[stoneLt] (0, 3) rectangle (8, 6);
+  % Varied rooflines
+  \fill[roofDark] (0, 6) -- (0, 6.5) -- (1.5, 6.5) -- (1.5, 6) -- cycle;
+  \fill[roofDark] (1.5, 6) -- (1.5, 7) -- (3, 7) -- (3, 6) -- cycle;
+  \fill[roofDark!80!red] (3, 6) -- (3, 6.3) -- (5, 6.3) -- (5, 6) -- cycle;
+  \fill[roofDark] (5, 6) -- (5, 6.8) -- (6.5, 6.8) -- (6.5, 6) -- cycle;
+  \fill[roofDark!80!red] (6.5, 6) -- (6.5, 6.5) -- (8, 6.5) -- (8, 6) -- cycle;
+  % Windows on buildings
+  \foreach \wx in {0.3, 0.8, 1.8, 2.3, 3.3, 3.8, 4.3, 5.3, 5.8, 6.8, 7.3} {
+    \fill[white] (\wx, 4.5) rectangle (\wx+0.3, 5.3);
+    \fill[white] (\wx, 3.5) rectangle (\wx+0.3, 4.2);
+  }
+  % Ground / cobblestones
+  \fill[stoneGray] (0, 0) rectangle (8, 3);
+  % Market stalls with striped awnings
+  % Stall 1 - red/white stripes
+  \fill[white] (0.5, 1.5) rectangle (2.5, 3.0);
+  \foreach \sy in {2.7, 2.85, 3.0} {
+    \fill[red!70] (0.3, \sy) rectangle (2.7, \sy+0.08);
+  }
+  \fill[red!70] (0.3, 3.0) -- (0.3, 3.3) -- (2.7, 3.3) -- (2.7, 3.0) -- cycle;
+  % Stall items (books)
+  \fill[blue!60] (0.7, 1.6) rectangle (0.9, 2.0);
+  \fill[red!50] (1.0, 1.6) rectangle (1.2, 2.0);
+  \fill[green!50] (1.3, 1.6) rectangle (1.5, 2.0);
+  \fill[orange] (1.6, 1.6) rectangle (1.8, 2.0);
+  \fill[purple!50] (1.9, 1.6) rectangle (2.1, 2.0);
+  \fill[brown!50] (2.2, 1.6) rectangle (2.4, 2.0);
+  % Stall 2 - blue/white stripes (cakes)
+  \fill[white] (3.0, 1.5) rectangle (5.0, 3.0);
+  \foreach \sy in {2.7, 2.85, 3.0} {
+    \fill[blue!50] (2.8, \sy) rectangle (5.2, \sy+0.08);
+  }
+  \fill[blue!50] (2.8, 3.0) -- (2.8, 3.3) -- (5.2, 3.3) -- (5.2, 3.0) -- cycle;
+  % Cakes
+  \fill[pink] (3.2, 1.6) circle (0.15);
+  \fill[yellow!80] (3.6, 1.6) circle (0.15);
+  \fill[brown!50] (4.0, 1.6) circle (0.15);
+  \fill[pink!50] (4.4, 1.6) circle (0.15);
+  \fill[white] (4.8, 1.6) circle (0.15);
+  % Stall 3 - green/white stripes (scarves)
+  \fill[white] (5.5, 1.5) rectangle (7.5, 3.0);
+  \foreach \sy in {2.7, 2.85, 3.0} {
+    \fill[green!60!black] (5.3, \sy) rectangle (7.7, \sy+0.08);
+  }
+  \fill[green!60!black] (5.3, 3.0) -- (5.3, 3.3) -- (7.7, 3.3) -- (7.7, 3.0) -- cycle;
+  % Scarves hanging
+  \fill[red] (5.7, 2.0) rectangle (5.9, 2.8);
+  \fill[blue!60] (6.1, 2.0) rectangle (6.3, 2.8);
+  \fill[purple] (6.5, 2.0) rectangle (6.7, 2.8);
+  \fill[orange] (6.9, 2.0) rectangle (7.1, 2.8);
+  \fill[green!50] (7.3, 2.0) rectangle (7.5, 2.8);
+}
+
+%% --- CAMBRIDGE AT NIGHT ---
+\newcommand{\drawCambridgeNight}{%
+  % Night sky gradient
+  \fill[skyNight] (0, 4) rectangle (8, 8);
+  \fill[skyNightMid] (0, 2) rectangle (8, 4);
+  % Stars
+  \foreach \sx/\sy in {0.5/7.5, 1.2/6.8, 1.8/7.2, 2.5/6.5, 3.0/7.6, 3.8/7.0, 4.5/7.4, 5.0/6.7, 5.8/7.3, 6.2/6.9, 7.0/7.5, 7.5/6.6, 0.8/6.2, 2.0/5.8, 4.0/6.3, 6.5/5.9} {
+    \fill[white] (\sx, \sy) circle (0.04);
+  }
+  % Moon
+  \fill[yellow!90!white] (6.5, 7.0) circle (0.4);
+  \fill[skyNight] (6.7, 7.1) circle (0.35);
+  % College buildings silhouette
+  \fill[black!80] (0, 0) rectangle (8, 2.5);
+  % King's College Chapel silhouette (center)
+  \fill[black!70] (2.5, 2.5) rectangle (5.5, 5.0);
+  % Tower pinnacles
+  \fill[black!70] (2.3, 5.0) rectangle (2.9, 5.5);
+  \fill[black!70] (2.3, 5.5) -- (2.45, 6.0) -- (2.6, 5.5) -- cycle;
+  \fill[black!70] (2.7, 5.5) -- (2.85, 6.0) -- (3.0, 5.5) -- cycle;
+  \fill[black!70] (5.1, 5.0) rectangle (5.7, 5.5);
+  \fill[black!70] (5.1, 5.5) -- (5.25, 6.0) -- (5.4, 5.5) -- cycle;
+  \fill[black!70] (5.5, 5.5) -- (5.65, 6.0) -- (5.8, 5.5) -- cycle;
+  % Gothic window glow
+  \foreach \wx in {2.8, 3.4, 4.0, 4.6} {
+    \fill[yellow!50, opacity=0.4] (\wx, 2.8) rectangle (\wx+0.35, 4.5);
+    \fill[yellow!50, opacity=0.4] (\wx, 4.5) -- (\wx+0.175, 4.8) -- (\wx+0.35, 4.5) -- cycle;
+  }
+  % Other buildings
+  \fill[black!80] (0, 2.5) rectangle (2.3, 4.0);
+  \fill[black!75] (5.8, 2.5) rectangle (8, 3.8);
+  % Warm window lights
+  \foreach \wx/\wy in {0.3/2.8, 0.8/2.8, 1.3/3.0, 1.8/2.8, 0.5/3.4, 1.0/3.4, 1.5/3.4, 6.0/2.8, 6.5/2.8, 7.0/3.0, 7.5/2.8, 6.3/3.3, 6.8/3.3} {
+    \fill[yellow!70, opacity=0.6] (\wx, \wy) rectangle (\wx+0.25, \wy+0.35);
+  }
+  % River reflection
+  \fill[skyNight!60!waterDark] (0, 0) rectangle (8, 1.2);
+  \fill[yellow!30, opacity=0.2] (2.5, 0) rectangle (5.5, 1.0);
+  % Moon reflection
+  \fill[yellow!30, opacity=0.3] (6.3, 0) .. controls (6.4, 0.5) and (6.6, 0.8) .. (6.7, 1.2)
+    -- (6.5, 1.2) .. controls (6.4, 0.8) and (6.2, 0.5) .. (6.3, 0) -- cycle;
+}
+
+%% --- ATLANTIC OCEAN (DAY) ---
+\newcommand{\drawAtlanticDay}{%
+  % Sky
+  \fill[skyBlue] (0, 4) rectangle (8, 8);
+  \fill[skyLight] (0, 6) rectangle (8, 8);
+  \drawCloud{0.5}{6.5}{1.5}
+  \drawCloud{3.5}{7.0}{1.2}
+  \drawCloud{6.0}{6.3}{1.0}
+  % Ocean
+  \fill[waterBlue] (0, 0) rectangle (8, 4);
+  \fill[waterDark] (0, 0) rectangle (8, 2);
+  % Waves
+  \foreach \wy in {1.0, 1.8, 2.6, 3.4} {
+    \draw[waterLight, line width=1.5pt, decorate, decoration={snake, amplitude=0.1cm, segment length=0.8cm}]
+      (0, \wy) -- (8, \wy);
+  }
+  % Whitecaps
+  \foreach \wx/\wy in {1.5/3.2, 3.0/2.8, 4.5/3.5, 6.0/3.0, 7.5/3.3} {
+    \fill[white, opacity=0.6] (\wx, \wy) ellipse (0.3 and 0.06);
+  }
+  % Tiny ship in distance
+  \fill[stoneGray] (1.5, 2.0) -- (1.3, 2.0) -- (1.2, 2.15) -- (1.8, 2.15) -- (1.7, 2.0) -- cycle;
+  \fill[white] (1.5, 2.15) -- (1.5, 2.5) -- (1.7, 2.3) -- cycle;
+}
+
+%% --- ATLANTIC OCEAN (NIGHT) ---
+\newcommand{\drawAtlanticNight}{%
+  % Night sky
+  \fill[skyNight] (0, 4) rectangle (8, 8);
+  % Stars
+  \foreach \sx/\sy in {0.3/7.5, 0.8/6.8, 1.5/7.3, 2.2/6.5, 2.8/7.7, 3.5/7.0, 4.2/7.5, 4.8/6.7, 5.5/7.2, 6.0/6.9, 6.8/7.4, 7.3/6.6, 7.8/7.1, 1.0/5.8, 3.0/5.5, 5.0/5.9, 7.0/5.6, 2.0/4.8, 6.0/4.6} {
+    \fill[white] (\sx, \sy) circle (0.035);
+  }
+  % Moon
+  \fill[yellow!90!white] (6.5, 7.0) circle (0.5);
+  \fill[skyNight] (6.75, 7.1) circle (0.45);
+  % Dark ocean
+  \fill[skyNight!60!waterDark] (0, 0) rectangle (8, 4);
+  \fill[black!50!waterDark] (0, 0) rectangle (8, 2);
+  % Moon reflection on water
+  \fill[yellow!30, opacity=0.3] (6.0, 0) .. controls (6.2, 1.5) and (6.4, 3.0) .. (6.5, 4.0)
+    -- (6.7, 4.0) .. controls (6.6, 3.0) and (6.8, 1.5) .. (7.0, 0) -- cycle;
+  % Waves
+  \foreach \wy in {1.0, 2.0, 3.0} {
+    \draw[waterDark!50!white, line width=0.8pt, opacity=0.4, decorate, decoration={snake, amplitude=0.08cm, segment length=1cm}]
+      (0, \wy) -- (8, \wy);
+  }
+}
+
+%% --- ENGLISH PATCHWORK FIELDS (from above) ---
+\newcommand{\drawEnglishFields}{%
+  % Sky (dawn)
+  \fill[skyDawn] (0, 5) rectangle (8, 8);
+  \fill[skyBlue!50!skyDawn] (0, 6) rectangle (8, 8);
+  \drawCloud{1}{7}{0.7}
+  \drawCloud{4}{7.3}{0.9}
+  \drawCloud{6.5}{6.8}{0.6}
+  % Patchwork fields from above
+  % Each field is a different shade of green/yellow/brown
+  \fill[grassGreen] (0, 0) rectangle (2, 2.5);
+  \fill[grassDark] (2, 0) rectangle (4, 2);
+  \fill[yellow!60!grassGreen] (4, 0) rectangle (6, 2.5);
+  \fill[grassGreen!80!yellow] (6, 0) rectangle (8, 2);
+  \fill[grassDark!80!yellow] (0, 2.5) rectangle (3, 4.5);
+  \fill[grassGreen!60!yellow] (3, 2) rectangle (5.5, 4);
+  \fill[grassDark] (5.5, 2.5) rectangle (8, 4.5);
+  \fill[yellow!50!grassGreen] (0, 4.5) rectangle (2.5, 5);
+  \fill[grassGreen] (2.5, 4) rectangle (5, 5);
+  \fill[grassDark!60!grassGreen] (5, 4.5) rectangle (8, 5);
+  % Field boundaries (hedgerows)
+  \draw[grassDark!50!black, line width=1pt] (2, 0) -- (2, 2.5);
+  \draw[grassDark!50!black, line width=1pt] (4, 0) -- (4, 2.5);
+  \draw[grassDark!50!black, line width=1pt] (6, 0) -- (6, 2);
+  \draw[grassDark!50!black, line width=1pt] (0, 2.5) -- (3, 2.5);
+  \draw[grassDark!50!black, line width=1pt] (3, 2) -- (5.5, 2);
+  \draw[grassDark!50!black, line width=1pt] (5.5, 2.5) -- (8, 2.5);
+  \draw[grassDark!50!black, line width=1pt] (3, 2) -- (3, 4.5);
+  \draw[grassDark!50!black, line width=1pt] (5.5, 2.5) -- (5.5, 4.5);
+  \draw[grassDark!50!black, line width=1pt] (0, 4.5) -- (8, 4.5);
+  % Winding river through fields
+  \draw[waterBlue, line width=3pt]
+    (0, 1.5) .. controls (1, 1.8) and (2.5, 3) .. (3.5, 3.5)
+    .. controls (4.5, 4) and (6, 3.5) .. (8, 4);
+  % Tiny houses/village
+  \foreach \hx/\hy in {1/3.5, 1.4/3.3, 1.7/3.6} {
+    \fill[white] (\hx, \hy) rectangle (\hx+0.2, \hy+0.15);
+    \fill[roofDark] (\hx-0.02, \hy+0.15) -- (\hx+0.1, \hy+0.25) -- (\hx+0.22, \hy+0.15) -- cycle;
+  }
+}
+
+%% --- COZY ROOM (for final page) ---
+\newcommand{\drawCozyRoom}{%
+  % Wall
+  \fill[yellow!20!white] (0, 0) rectangle (8, 8);
+  % Floor
+  \fill[woodBrown!40!white] (0, 0) rectangle (8, 2.5);
+  % Window with night sky
+  \fill[stoneLt] (4.5, 4.0) rectangle (7.0, 7.0);
+  \fill[skyNight] (4.7, 4.2) rectangle (6.8, 6.8);
+  % Window cross
+  \fill[stoneLt] (5.75, 4.2) rectangle (5.85, 6.8);
+  \fill[stoneLt] (4.7, 5.5) rectangle (6.8, 5.6);
+  % Stars in window
+  \fill[white] (5.0, 6.2) circle (0.04);
+  \fill[white] (5.5, 6.5) circle (0.03);
+  \fill[white] (6.0, 6.0) circle (0.04);
+  \fill[white] (6.5, 6.4) circle (0.03);
+  % Rochester pennant on wall
+  \fill[blue!60] (1.0, 6.0) -- (1.0, 7.0) -- (2.2, 6.5) -- cycle;
+  \node[white, font=\tiny\sffamily\bfseries, rotate=-10] at (1.4, 6.5) {ROC};
+  % Cambridge scarf on wall
+  \fill[blue!30!skyBlue] (2.8, 6.8) .. controls (3.2, 6.5) and (3.5, 6.8) .. (3.8, 6.4);
+  \draw[blue!30!skyBlue, line width=3pt] (2.8, 6.8) .. controls (3.2, 6.5) and (3.5, 6.8) .. (3.8, 6.4);
+  \draw[white, line width=0.5pt] (3.0, 6.7) -- (3.1, 6.6);
+  \draw[white, line width=0.5pt] (3.3, 6.65) -- (3.4, 6.55);
+  \draw[white, line width=0.5pt] (3.6, 6.55) -- (3.7, 6.45);
+  % Rug
+  \fill[red!40] (1.5, 0.5) ellipse (2.5 and 1.0);
+  \fill[red!50] (1.5, 0.5) ellipse (2.0 and 0.7);
+  \fill[red!30] (1.5, 0.5) ellipse (1.2 and 0.4);
+  % Pillow/bed area
+  \fill[blue!20!white] (0.5, 1.5) ellipse (2.5 and 1.2);
+  \fill[white] (0.5, 2.0) ellipse (1.5 and 0.6);
+  % Bookshelf
+  \fill[woodBrown] (6.5, 2.5) rectangle (7.8, 4.0);
+  \fill[woodDark] (6.5, 3.2) rectangle (7.8, 3.25);
+  \fill[red!50] (6.6, 2.6) rectangle (6.75, 3.15);
+  \fill[blue!50] (6.8, 2.6) rectangle (6.95, 3.15);
+  \fill[green!50] (7.0, 2.6) rectangle (7.15, 3.15);
+  \fill[orange] (7.2, 2.6) rectangle (7.35, 3.15);
+  \fill[purple!50] (7.4, 2.6) rectangle (7.55, 3.15);
+  \fill[yellow!60] (6.6, 3.3) rectangle (6.75, 3.9);
+  \fill[red!40] (6.8, 3.3) rectangle (6.95, 3.9);
+  \fill[blue!40] (7.0, 3.3) rectangle (7.15, 3.9);
+  \fill[green!40] (7.2, 3.3) rectangle (7.35, 3.9);
+}
+
+%% --- THOUGHT BUBBLE (for homesick page) ---
+\newcommand{\drawThoughtBubble}[3]{%
+  % #1=x, #2=y, #3=scale
+  \begin{scope}[shift={(#1,#2)}, scale=#3]
+    % Bubble
+    \fill[white, opacity=0.9] (0, 0) ellipse (2.0 and 1.5);
+    \draw[stoneGray, line width=1pt] (0, 0) ellipse (2.0 and 1.5);
+    % Thought dots leading down
+    \fill[white, opacity=0.9] (-1.5, -1.8) circle (0.2);
+    \draw[stoneGray, line width=0.5pt] (-1.5, -1.8) circle (0.2);
+    \fill[white, opacity=0.9] (-1.8, -2.2) circle (0.12);
+    \draw[stoneGray, line width=0.5pt] (-1.8, -2.2) circle (0.12);
+    % Mini High Falls inside bubble
+    \fill[stoneDark] (-1.2, -0.5) rectangle (-0.5, 0.8);
+    \fill[stoneDark] (0.5, -0.5) rectangle (1.2, 0.8);
+    \fill[waterLight, opacity=0.7] (-0.5, -0.5) rectangle (0.5, 0.8);
+    \draw[white, line width=1pt, opacity=0.5] (-0.2, 0.8) -- (-0.15, -0.3);
+    \draw[white, line width=1pt, opacity=0.5] (0.2, 0.8) -- (0.25, -0.3);
+    \fill[white, opacity=0.4] (0, -0.5) ellipse (0.8 and 0.3);
+  \end{scope}
+}
+
+%% --- HILLTOP OVERLOOK ---
+\newcommand{\drawHilltopSunset}{%
+  % Sunset sky
+  \fill[skySunset] (0, 0) rectangle (8, 8);
+  \fill[skyDawn] (0, 5) rectangle (8, 8);
+  \fill[skyBlue!20!skyDawn] (0, 6.5) rectangle (8, 8);
+  % Sun setting
+  \fill[yellow!80, opacity=0.6] (4.0, 3.5) circle (1.0);
+  \fill[yellow!90, opacity=0.8] (4.0, 3.5) circle (0.6);
+  % Distant city silhouette (Rochester)
+  \fill[black!60, opacity=0.5] (0, 2.5) rectangle (8, 3.5);
+  % Kodak tower
+  \fill[black!50, opacity=0.6] (3.5, 2.5) rectangle (4.0, 4.5);
+  \fill[black!50, opacity=0.6] (3.6, 4.5) rectangle (3.9, 4.8);
+  % Other buildings
+  \fill[black!50, opacity=0.5] (1, 2.5) rectangle (1.5, 3.8);
+  \fill[black!50, opacity=0.5] (2, 2.5) rectangle (2.5, 3.5);
+  \fill[black!50, opacity=0.5] (5, 2.5) rectangle (5.5, 3.6);
+  \fill[black!50, opacity=0.5] (6, 2.5) rectangle (6.5, 3.3);
+  % Hilltop (foreground)
+  \fill[grassDark!80!black] (0, 0) .. controls (2, 2.5) and (6, 2.8) .. (8, 2.0)
+    -- (8, 0) -- cycle;
+  % Grass texture
+  \foreach \gx in {0.5, 1.5, 2.5, 3.5, 5.0, 6.0, 7.0} {
+    \pgfmathsetmacro{\gy}{0.3 + 2.0*\gx/8 + 0.3*sin(60*\gx)}
+    \draw[grassDark!50!black, line width=0.5pt] (\gx, \gy) -- (\gx-0.1, \gy+0.3);
+    \draw[grassDark!50!black, line width=0.5pt] (\gx, \gy) -- (\gx+0.1, \gy+0.25);
+  }
+}
+
+%% --- RAINY WINDOW ---
+\newcommand{\drawRainyWindow}{%
+  % Room wall
+  \fill[yellow!15!white] (0, 0) rectangle (8, 8);
+  % Large window
+  \fill[stoneLt] (1.0, 2.5) rectangle (7.0, 7.5);
+  % Window panes showing grey rainy sky
+  \fill[stoneGray!50!skyLight] (1.2, 2.7) rectangle (3.9, 7.3);
+  \fill[stoneGray!50!skyLight] (4.1, 2.7) rectangle (6.8, 7.3);
+  % Window frame cross
+  \fill[stoneLt] (3.9, 2.5) rectangle (4.1, 7.5);
+  \fill[stoneLt] (1.0, 5.0) rectangle (7.0, 5.2);
+  % Rain streaks on window
+  \foreach \rx/\ry in {1.5/7.0, 2.0/6.5, 2.5/7.2, 3.0/6.0, 3.5/7.0, 4.5/6.8, 5.0/7.0, 5.5/6.3, 6.0/7.1, 6.5/6.5} {
+    \draw[waterBlue!50!white, line width=0.8pt, opacity=0.6]
+      (\rx, \ry) .. controls (\rx-0.05, \ry-0.5) and (\rx+0.05, \ry-1.0) .. (\rx, \ry-1.5);
+  }
+  % Window sill
+  \fill[stoneLt] (0.8, 2.3) rectangle (7.2, 2.7);
+  % Floor
+  \fill[woodBrown!30!white] (0, 0) rectangle (8, 2.3);
+  % Cushion on window sill
+  \fill[red!40] (2.5, 2.3) ellipse (1.5 and 0.4);
+}
+
+%% --- PARK BENCH ---
+\newcommand{\drawParkBench}{%
+  % Sky
+  \fill[skyBlue] (0,0) rectangle (8,8);
+  \fill[skyLight] (0, 6) rectangle (8, 8);
+  \drawCloud{2}{7}{0.8}
+  \drawCloud{5.5}{7.3}{0.9}
+  % Grass
+  \fill[grassGreen] (0, 0) rectangle (8, 3);
+  % Trees in background
+  \drawTree{1.0}{3.0}{1.2}
+  \drawTree{6.5}{3.0}{1.0}
+  \drawTree{7.5}{3.0}{0.8}
+  % Bench
+  \fill[woodBrown] (2.5, 2.0) rectangle (5.5, 2.2); % seat
+  \fill[woodBrown] (2.5, 2.2) rectangle (5.5, 2.35); % seat back bottom
+  \fill[woodBrown] (2.5, 2.5) rectangle (5.5, 2.65); % seat back middle
+  \fill[woodBrown] (2.5, 2.8) rectangle (5.5, 2.95); % seat back top
+  % Bench legs
+  \fill[woodDark] (2.7, 1.5) rectangle (2.85, 2.0);
+  \fill[woodDark] (5.15, 1.5) rectangle (5.3, 2.0);
+  % Bench arm rests
+  \fill[woodDark] (2.45, 2.0) rectangle (2.6, 2.95);
+  \fill[woodDark] (5.4, 2.0) rectangle (5.55, 2.95);
+  % Flowers near bench
+  \fill[yellow] (1.8, 2.5) circle (0.1); \fill[grassDark] (1.8, 2.0) rectangle (1.83, 2.5);
+  \fill[pink] (2.2, 2.5) circle (0.1); \fill[grassDark] (2.2, 2.0) rectangle (2.23, 2.5);
+  \fill[yellow] (6.0, 2.5) circle (0.1); \fill[grassDark] (6.0, 2.0) rectangle (6.03, 2.5);
+  \fill[purple] (5.8, 2.5) circle (0.1); \fill[grassDark] (5.8, 2.0) rectangle (5.83, 2.5);
+  % Path
+  \fill[stoneGray!60] (3.0, 0) -- (5.0, 0) -- (5.2, 1.5) -- (2.8, 1.5) -- cycle;
+}
+
+%% --- COLLEGE COURTYARD ---
+\newcommand{\drawCollegeCourtyard}{%
+  % Sky
+  \fill[skyBlue] (0,0) rectangle (8,8);
+  \drawCloud{3}{7.2}{0.8}
+  % College buildings (three sides of a quad)
+  % Back wall
+  \fill[stoneLt] (0, 4) rectangle (8, 6.5);
+  \fill[roofDark] (0, 6.5) rectangle (8, 7);
+  % Tower / chapel element
+  \fill[stoneLt] (3.5, 4) rectangle (4.5, 7.2);
+  \fill[stoneGray] (3.45, 7.2) -- (4.0, 7.8) -- (4.55, 7.2) -- cycle;
+  % Windows
+  \foreach \wx in {0.5, 1.3, 2.1, 5.0, 5.8, 6.6} {
+    \fill[white] (\wx, 4.8) rectangle (\wx+0.45, 5.8);
+    \fill[skyLight] (\wx+0.05, 4.85) rectangle (\wx+0.4, 5.75);
+  }
+  \foreach \wx in {0.5, 1.3, 2.1, 5.0, 5.8, 6.6} {
+    \fill[white] (\wx, 4.0) rectangle (\wx+0.45, 4.5);
+  }
+  % Archway entrance
+  \fill[stoneDark] (3.7, 4.0) rectangle (4.3, 5.5);
+  \fill[stoneDark] (3.7, 5.5) .. controls (3.7, 5.9) and (4.3, 5.9) .. (4.3, 5.5);
+  \fill[black!40] (3.75, 4.0) rectangle (4.25, 5.4);
+  % Lawn (quad)
+  \fill[grassGreen] (0, 0) rectangle (8, 4);
+  % "Keep off the grass" sign
+  \fill[woodBrown] (1.5, 1.5) rectangle (1.55, 2.2);
+  \fill[white] (1.1, 2.2) rectangle (2.0, 2.5);
+  \node[font=\tiny] at (1.55, 2.35) {Keep Off};
+  % Path around quad
+  \fill[stoneGray] (0, 0) rectangle (8, 0.8);
+  \fill[stoneGray] (0, 3.5) rectangle (8, 4);
+}
+
+\endinput
