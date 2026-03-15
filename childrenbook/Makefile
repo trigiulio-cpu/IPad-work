@@ -7,7 +7,7 @@ ENGINE := $(shell command -v lualatex 2>/dev/null || echo pdflatex)
 
 all: $(MAIN).pdf
 
-$(MAIN).pdf: $(MAIN).tex tikz-dragons.sty tikz-scenes.sty
+$(MAIN).pdf: $(MAIN).tex
 	$(ENGINE) -interaction=nonstopmode $(MAIN).tex
 	$(ENGINE) -interaction=nonstopmode $(MAIN).tex
 

@@ -4,6 +4,9 @@
 %
 % Compile with: pdflatex goldie-and-draghino.tex (run twice)
 %            or: lualatex goldie-and-draghino.tex (run twice)
+%
+% Place AI-generated images as page-01.png through page-24.png
+% in the images/ subdirectory. See image-prompts.md for prompts.
 
 \documentclass[14pt, letterpaper, oneside]{extarticle}
 
@@ -16,21 +19,14 @@
   bottom=0.7in
 ]{geometry}
 
-\usepackage{tikz}
-\usepackage{xcolor}
 \usepackage{graphicx}
+\usepackage{xcolor}
 \usepackage{microtype}
 \usepackage{avant}          % TeX Gyre Adventor (geometric sans-serif)
 \renewcommand{\familydefault}{\sfdefault}
 
-\usetikzlibrary{
-  calc, positioning, decorations.pathmorphing,
-  patterns, shadows, shapes.geometric, backgrounds
-}
-
-% Load custom packages (from same directory)
-\usepackage{tikz-dragons}
-\usepackage{tikz-scenes}
+% Point graphicx to the images/ subdirectory
+\graphicspath{{images/}}
 
 % No page numbers
 \pagestyle{empty}
@@ -43,16 +39,25 @@
 %% PAGE LAYOUT MACROS
 %% ========================================================
 
-% Layout A: Full-page illustration with text overlay at bottom
-% #1 = TikZ drawing commands (in 8x8 coordinate system)
+% Layout A: Full-page illustration with text below
+% #1 = image filename (without extension)
 % #2 = Story text
 \newcommand{\storypage}[2]{%
   \clearpage
   \vspace*{-0.2in}
   \begin{center}
-    \begin{tikzpicture}[x=0.72in, y=0.48in]
-      #1
-    \end{tikzpicture}
+    \IfFileExists{images/#1.png}{%
+      \includegraphics[width=\textwidth, height=4.5in, keepaspectratio]{#1}%
+    }{%
+      % Placeholder when image is not yet available
+      \fcolorbox{gray}{gray!10}{%
+        \parbox[c][4.5in][c]{\dimexpr\textwidth-2\fboxsep-2\fboxrule}{%
+          \centering\large\color{gray}%
+          [Illustration: #1.png]\\[0.3em]
+          \small See image-prompts.md for generation prompt%
+        }%
+      }%
+    }
   \end{center}
   \vspace{-0.1in}
   \begin{center}
@@ -64,15 +69,24 @@
 }
 
 % Layout B: Top illustration (smaller), bottom text
-% #1 = TikZ drawing commands (in 8x8 coordinate system)
+% #1 = image filename (without extension)
 % #2 = Story text
 \newcommand{\storypageB}[2]{%
   \clearpage
   \vspace*{0.05in}
   \begin{center}
-    \begin{tikzpicture}[x=0.58in, y=0.38in]
-      #1
-    \end{tikzpicture}
+    \IfFileExists{images/#1.png}{%
+      \includegraphics[width=0.85\textwidth, height=3.5in, keepaspectratio]{#1}%
+    }{%
+      % Placeholder when image is not yet available
+      \fcolorbox{gray}{gray!10}{%
+        \parbox[c][3.5in][c]{\dimexpr0.85\textwidth-2\fboxsep-2\fboxrule}{%
+          \centering\large\color{gray}%
+          [Illustration: #1.png]\\[0.3em]
+          \small See image-prompts.md for generation prompt%
+        }%
+      }%
+    }
   \end{center}
   \vspace{0.1in}
   \begin{center}
@@ -103,48 +117,17 @@ Two Dragons, Two Cities}
 
 \vspace{0.4in}
 
-\begin{tikzpicture}[x=0.75in, y=0.75in]
-  % Cloud
-  \fill[white, opacity=0.9] (4, 5.5) ellipse (2.5 and 1.0);
-  \fill[white, opacity=0.9] (3.5, 5.3) ellipse (1.5 and 0.7);
-  \fill[white, opacity=0.9] (4.5, 5.3) ellipse (1.5 and 0.7);
-
-  % Dragons on the cloud
-  \drawGoldie{2.5}{4.5}{0.8}{1}
-  \drawDraghino{4.5}{4.5}{0.8}{-1}
-
-  % Split scene below
-  % Rochester side (left)
-  \fill[skySunset!50] (0, 0) rectangle (4, 3.5);
-  \fill[grassDark] (0, 0) rectangle (4, 0.5);
-  % Simplified Rochester skyline
-  \fill[stoneDark!70] (0.5, 0.5) rectangle (1.0, 2.0);
-  \fill[stoneDark!70] (1.2, 0.5) rectangle (1.8, 2.8);  % Kodak tower
-  \fill[stoneDark!60] (1.35, 2.8) rectangle (1.65, 3.1);
-  \fill[stoneDark!70] (2.0, 0.5) rectangle (2.5, 2.2);
-  \fill[stoneDark!70] (2.7, 0.5) rectangle (3.2, 1.8);
-  \fill[stoneDark!70] (3.4, 0.5) rectangle (3.8, 2.0);
-
-  % Cambridge side (right)
-  \fill[skyBlue!50] (4, 0) rectangle (8, 3.5);
-  \fill[grassGreen!70] (4, 0) rectangle (8, 0.8);
-  % Simplified King's College
-  \fill[stoneLt!80] (5.0, 0.8) rectangle (7.0, 2.5);
-  \fill[stoneGray] (4.8, 2.5) rectangle (5.4, 3.0);
-  \fill[stoneGray] (4.8, 3.0) -- (4.95, 3.4) -- (5.1, 3.0) -- cycle;
-  \fill[stoneGray] (5.2, 3.0) -- (5.35, 3.4) -- (5.5, 3.0) -- cycle;
-  \fill[stoneGray] (6.6, 2.5) rectangle (7.2, 3.0);
-  \fill[stoneGray] (6.6, 3.0) -- (6.75, 3.4) -- (6.9, 3.0) -- cycle;
-  \fill[stoneGray] (7.0, 3.0) -- (7.15, 3.4) -- (7.3, 3.0) -- cycle;
-  % Gothic windows
-  \foreach \wx in {5.2, 5.7, 6.2} {
-    \fill[skyBlue!30] (\wx, 1.0) rectangle (\wx+0.3, 2.1);
-    \fill[skyBlue!30] (\wx, 2.1) -- (\wx+0.15, 2.35) -- (\wx+0.3, 2.1) -- cycle;
-  }
-
-  % Dividing line
-  \draw[white, line width=2pt] (4, 0) -- (4, 3.5);
-\end{tikzpicture}
+\IfFileExists{images/page-01.png}{%
+  \includegraphics[width=0.85\textwidth, height=4.0in, keepaspectratio]{page-01}%
+}{%
+  \fcolorbox{gray}{gray!10}{%
+    \parbox[c][4.0in][c]{0.8\textwidth}{%
+      \centering\large\color{gray}%
+      [Title illustration: page-01.png]\\[0.3em]
+      \small Both dragons on a cloud, Rochester/Cambridge below%
+    }%
+  }%
+}
 
 \vspace{0.5in}
 
@@ -156,10 +139,7 @@ Two Dragons, Two Cities}
 %% --------------------------------------------------------
 %% PAGE 2 — MEET GOLDIE
 %% --------------------------------------------------------
-\storypageB{
-  \drawCozyCave
-  \drawGoldie{3.5}{1.8}{1.2}{1}
-}{
+\storypageB{page-02}{
 In a cozy cave overlooking the Genesee River in Rochester, New York, lived a sparkly blue dragon named Goldie. Her scales shimmered like the sky on a summer day, and her golden belly glowed like the sunrise over Lake Ontario.
 
 She had big, bright amber eyes that noticed everything --- every falling leaf, every ripple in the river, every star that came out at night.
@@ -168,10 +148,7 @@ She had big, bright amber eyes that noticed everything --- every falling leaf, e
 %% --------------------------------------------------------
 %% PAGE 3 — MEET DRAGHINO
 %% --------------------------------------------------------
-\storypageB{
-  \drawGarden
-  \drawDraghino{3.5}{3.2}{1.2}{1}
-}{
+\storypageB{page-03}{
 Next door, in a garden bursting with every colour you could imagine, lived Draghino --- a dragon painted in all the shades of the rainbow.
 
 Pink and purple and yellow and green spots covered Draghino's chubby round body. Bright teal eyes sparkled with curiosity, and three little blue horns sat proudly on top. Draghino thought every day was an adventure waiting to happen.
@@ -180,22 +157,14 @@ Pink and purple and yellow and green spots covered Draghino's chubby round body.
 %% --------------------------------------------------------
 %% PAGE 4 — BEST FRIENDS (Genesee River)
 %% --------------------------------------------------------
-\storypage{
-  \drawGeneseeRiver
-  \drawGoldie{2.0}{2.5}{0.9}{1}
-  \drawDraghino{4.8}{2.5}{0.9}{-1}
-}{
+\storypage{page-04}{
 Goldie and Draghino were the very best of friends. Every morning they met by the Genesee River and planned their day together. In autumn, the trees along the banks turned orange and red, and the two dragons would race through the falling leaves, laughing until their bellies ached.
 }
 
 %% --------------------------------------------------------
 %% PAGE 5 — HIGH FALLS
 %% --------------------------------------------------------
-\storypage{
-  \drawHighFalls
-  \drawGoldie{2.8}{6.5}{0.65}{1}
-  \drawDraghino{4.2}{6.5}{0.65}{-1}
-}{
+\storypage{page-05}{
 Their favourite spot was High Falls, where the Genesee River thundered over a cliff and crashed into a pool of swirling mist far below.
 
 ``I bet I could fly right through that mist!'' said Goldie.
@@ -206,11 +175,7 @@ Their favourite spot was High Falls, where the Genesee River thundered over a cl
 %% --------------------------------------------------------
 %% PAGE 6 — STRONG MUSEUM
 %% --------------------------------------------------------
-\storypageB{
-  \drawStrongMuseum
-  \drawGoldie{1.8}{1.5}{0.7}{1}
-  \drawDraghino{5.8}{1.5}{0.7}{-1}
-}{
+\storypageB{page-06}{
 On rainy days they visited the Strong Museum --- the National Museum of Play! They played with every exhibit they could find: giant board games, rooms full of toys, and video games from long, long ago.
 
 ``This is the best museum in the whole world,'' said Draghino, bouncing on a giant rubber ball. Goldie agreed, though she preferred the butterfly garden upstairs.
@@ -219,11 +184,7 @@ On rainy days they visited the Strong Museum --- the National Museum of Play! Th
 %% --------------------------------------------------------
 %% PAGE 7 — ROCHESTER WINTER
 %% --------------------------------------------------------
-\storypage{
-  \drawSnowScene
-  \drawGoldie{2.5}{2.8}{0.9}{1}
-  \drawDraghino{5.0}{2.8}{0.9}{-1}
-}{
+\storypage{page-07}{
 When winter came, Rochester turned white. Snow piled up on every roof and every branch, and the two friends built snow-dragons in the park.
 
 Goldie's golden tummy made an excellent sled for sliding down the hills. ``Wheeeee!'' she cried, while Draghino tumbled along behind, leaving a rainbow trail in the snow.
@@ -232,30 +193,7 @@ Goldie's golden tummy made an excellent sled for sliding down the hills. ``Wheee
 %% --------------------------------------------------------
 %% PAGE 8 — GARBAGE PLATE
 %% --------------------------------------------------------
-\storypageB{
-  % Picnic table scene
-  \fill[skyBlue] (0,0) rectangle (8,8);
-  \fill[grassGreen] (0,0) rectangle (8,3);
-  \drawCloud{2}{7}{0.8}
-  \drawCloud{6}{7.3}{0.7}
-  % Picnic table
-  \fill[woodBrown] (1.5, 2.5) rectangle (6.5, 2.8);
-  \fill[woodDark] (2.0, 1.5) rectangle (2.3, 2.5);
-  \fill[woodDark] (5.7, 1.5) rectangle (6.0, 2.5);
-  \fill[woodBrown] (1.8, 1.5) rectangle (6.2, 1.7);
-  % Giant plate
-  \fill[white] (4.0, 3.1) ellipse (1.8 and 0.5);
-  \fill[white] (4.0, 3.1) ellipse (1.6 and 0.4);
-  % Food on plate (colourful mess!)
-  \fill[yellow!80!orange] (3.2, 3.1) ellipse (0.4 and 0.25); % mac salad
-  \fill[brown!60] (4.0, 3.2) ellipse (0.5 and 0.2); % meat
-  \fill[red!60] (4.8, 3.1) ellipse (0.3 and 0.2); % hot sauce
-  \fill[yellow!70] (3.6, 3.0) ellipse (0.3 and 0.15); % fries
-  \fill[white!80!yellow] (4.4, 2.95) ellipse (0.25 and 0.15); % onions
-  % Dragons at table
-  \drawGoldie{2.0}{3.0}{0.7}{1}
-  \drawDraghino{5.2}{3.0}{0.7}{-1}
-}{
+\storypageB{page-08}{
 And when they were hungry, there was only one thing to eat: a \textbf{garbage plate}! That is what people in Rochester call their most famous meal --- a giant plate piled high with macaroni salad, fries, hot dogs, and plenty of hot sauce.
 
 ``More mac salad!'' cried Draghino.
@@ -268,24 +206,7 @@ They always ate every last bite.
 %% --------------------------------------------------------
 %% PAGE 9 — THE LETTER
 %% --------------------------------------------------------
-\storypageB{
-  % Indoor scene
-  \fill[yellow!20!white] (0,0) rectangle (8,8);
-  \fill[woodBrown!30!white] (0,0) rectangle (8,2);
-  % Door
-  \fill[woodBrown] (0.5, 2) rectangle (2.0, 5.5);
-  \fill[yellow!80!brown] (1.8, 3.8) circle (0.08);
-  % Mail slot
-  \fill[woodDark] (0.8, 3.5) rectangle (1.7, 3.7);
-  % Letter falling from mail slot
-  \fill[white] (1.2, 2.8) rectangle (2.2, 3.4);
-  \fill[red!50] (1.2, 2.8) -- (1.7, 3.1) -- (2.2, 2.8) -- cycle;
-  % Wax seal
-  \fill[red!70!black] (1.7, 3.2) circle (0.1);
-  % Dragons looking at letter
-  \drawGoldie{3.0}{2.0}{0.9}{-1}
-  \drawDraghino{5.5}{2.0}{0.9}{-1}
-}{
+\storypageB{page-09}{
 One morning, a letter arrived for Goldie. It had a fancy red seal and came from very far away.
 
 ``It is from Cambridge,'' said Goldie, her golden eyes wide with wonder. ``In \emph{England}. They have heard about my research on sparkly rocks, and they want me to come and study there!''
@@ -296,11 +217,7 @@ Draghino looked at the letter, then looked at Goldie, then looked at the letter 
 %% --------------------------------------------------------
 %% PAGE 10 — THE DILEMMA (Rochester skyline at sunset)
 %% --------------------------------------------------------
-\storypage{
-  \drawHilltopSunset
-  \drawGoldie{2.5}{1.5}{0.9}{1}
-  \drawDraghino{4.8}{1.5}{0.9}{-1}
-}{
+\storypage{page-10}{
 That evening, they climbed the highest hill and watched the sun set behind the Rochester skyline. The Kodak Tower stood tall and proud against the orange sky.
 
 ``But I cannot leave you behind,'' said Goldie quietly.
@@ -311,37 +228,7 @@ Draghino smiled their biggest smile. ``Who said anything about leaving me behind
 %% --------------------------------------------------------
 %% PAGE 11 — PACKING
 %% --------------------------------------------------------
-\storypageB{
-  % Room with suitcases
-  \fill[yellow!20!white] (0,0) rectangle (8,8);
-  \fill[woodBrown!30!white] (0,0) rectangle (8,2);
-  % Suitcases
-  \fill[blue!50] (0.5, 2) rectangle (2.0, 3.2);
-  \fill[blue!60] (0.5, 3.2) rectangle (2.0, 3.4);
-  \fill[red!50] (2.5, 2) rectangle (4.0, 3.5);
-  \fill[red!60] (2.5, 3.5) rectangle (4.0, 3.7);
-  \fill[green!40] (5.0, 2) rectangle (6.0, 2.8);
-  % Hot sauce jars
-  \foreach \jx in {6.3, 6.7, 7.1} {
-    \fill[red!60] (\jx, 2) rectangle (\jx+0.25, 2.6);
-    \fill[red!80!black] (\jx, 2.6) rectangle (\jx+0.25, 2.75);
-  }
-  \foreach \jx in {6.3, 6.7, 7.1} {
-    \fill[red!60] (\jx, 2.9) rectangle (\jx+0.25, 3.5);
-    \fill[red!80!black] (\jx, 3.5) rectangle (\jx+0.25, 3.65);
-  }
-  % More jars on top of suitcase
-  \foreach \jx in {0.7, 1.1, 1.5} {
-    \fill[red!60] (\jx, 3.4) rectangle (\jx+0.25, 4.0);
-    \fill[red!80!black] (\jx, 4.0) rectangle (\jx+0.25, 4.15);
-  }
-  % Books scattered
-  \fill[orange!50] (4.3, 2) rectangle (4.6, 2.8);
-  \fill[purple!40] (4.5, 2.1) rectangle (4.8, 2.5);
-  % Draghino sitting on overstuffed suitcase
-  \drawDraghino{2.7}{3.7}{0.8}{1}
-  \drawGoldie{5.0}{2.0}{0.8}{-1}
-}{
+\storypageB{page-11}{
 They packed everything they could carry. Goldie packed her books and her sparkly rock collection. Draghino insisted on bringing twelve jars of hot sauce.
 
 ``You cannot get a proper garbage plate in England,'' Draghino said wisely.
@@ -354,28 +241,7 @@ They packed everything they could carry. Goldie packed her books and her sparkly
 %% --------------------------------------------------------
 %% PAGE 12 — SAYING GOODBYE
 %% --------------------------------------------------------
-\storypage{
-  % Sky scene from above
-  \fill[skyBlue] (0,0) rectangle (8,8);
-  \fill[skyLight] (0,5) rectangle (8,8);
-  \drawCloud{1}{6.5}{1.0}
-  \drawCloud{5}{7.0}{0.8}
-  \drawCloud{3}{7.5}{0.7}
-  % Rochester far below
-  \fill[grassGreen!60!skyBlue] (0,0) rectangle (8,3);
-  % Tiny city
-  \fill[stoneGray!50] (2, 1) rectangle (2.3, 1.8);
-  \fill[stoneGray!50] (2.5, 1) rectangle (2.8, 2.2); % Kodak tower
-  \fill[stoneGray!40] (2.6, 2.2) rectangle (2.7, 2.4);
-  \fill[stoneGray!50] (3.0, 1) rectangle (3.2, 1.6);
-  \fill[stoneGray!50] (3.4, 1) rectangle (3.6, 1.5);
-  \fill[stoneGray!50] (3.8, 1) rectangle (4.0, 1.7);
-  % Tiny river
-  \draw[waterBlue!60, line width=1.5pt] (1.5, 0.5) .. controls (2.5, 1.0) and (3.5, 0.8) .. (5, 0.5);
-  % Dragons flying upward
-  \drawGoldieFlying{2.5}{4.5}{0.9}{1}
-  \drawDraghinoFlying{5.0}{5.0}{0.9}{-1}
-}{
+\storypage{page-12}{
 ``Goodbye, Rochester,'' they said together, looking down at the city growing smaller and smaller beneath them. ``Thank you for the falls and the snow and the plates.''
 
 The city twinkled below them like a box of stars, and the Genesee River wound through it like a silver ribbon.
@@ -384,11 +250,7 @@ The city twinkled below them like a box of stars, and the Genesee River wound th
 %% --------------------------------------------------------
 %% PAGE 13 — OVER THE ATLANTIC (DAY)
 %% --------------------------------------------------------
-\storypage{
-  \drawAtlanticDay
-  \drawGoldieFlying{2.0}{5.5}{0.8}{1}
-  \drawDraghinoFlying{5.0}{5.0}{0.8}{1}
-}{
+\storypage{page-13}{
 They flew east, over the wide Atlantic Ocean. The water stretched out in every direction --- blue and green and silver, sparkling in the sunlight.
 
 Far below, a tiny ship sailed across the waves. ``Do you think they can see us?'' asked Draghino.
@@ -399,11 +261,7 @@ Far below, a tiny ship sailed across the waves. ``Do you think they can see us?'
 %% --------------------------------------------------------
 %% PAGE 14 — OVER THE ATLANTIC (NIGHT)
 %% --------------------------------------------------------
-\storypageB{
-  \drawAtlanticNight
-  \drawGoldieFlying{3.0}{5.5}{0.7}{1}
-  \drawDraghinoFlying{5.5}{5.0}{0.7}{1}
-}{
+\storypageB{page-14}{
 They flew through the night. A thousand stars hung above them, and the moon painted a silver path across the dark water below.
 
 Draghino yawned a tremendous yawn. ``Are we there yet?''
@@ -416,11 +274,7 @@ Draghino yawned a tremendous yawn. ``Are we there yet?''
 %% --------------------------------------------------------
 %% PAGE 15 — FIRST SIGHT OF ENGLAND
 %% --------------------------------------------------------
-\storypage{
-  \drawEnglishFields
-  \drawGoldieFlying{2.5}{6.0}{0.7}{1}
-  \drawDraghinoFlying{5.0}{5.5}{0.7}{1}
-}{
+\storypage{page-15}{
 As the sun rose, green fields appeared below them --- tiny squares of emerald and gold stitched together like a quilt. Hedgerows drew neat lines between them, and a river wound through the patchwork like a thread of blue silk.
 
 ``That is England!'' cried Goldie.
@@ -431,11 +285,7 @@ Draghino opened one eye, looked down, and opened the other eye very wide indeed.
 %% --------------------------------------------------------
 %% PAGE 16 — ARRIVING IN CAMBRIDGE (King's College)
 %% --------------------------------------------------------
-\storypageB{
-  \drawKingsCollege
-  \drawGoldie{2.5}{2.0}{0.85}{1}
-  \drawDraghino{5.0}{2.0}{0.85}{-1}
-}{
+\storypageB{page-16}{
 They landed softly on a wide green lawn. Before them stood the most beautiful building they had ever seen --- King's College Chapel, with its tall stone towers reaching toward the clouds.
 
 ``Look at those windows,'' said Goldie. ``They must be a hundred feet tall.''
@@ -450,11 +300,7 @@ A small sign said: \emph{Please keep off the grass.}
 %% --------------------------------------------------------
 %% PAGE 17 — PUNTING ON THE CAM
 %% --------------------------------------------------------
-\storypage{
-  \drawCamRiver
-  \drawGoldie{3.5}{3.8}{0.6}{1}
-  \drawDraghino{4.2}{3.5}{0.6}{-1}
-}{
+\storypage{page-17}{
 They tried punting on the River Cam. This meant standing in a long, flat boat and pushing a pole against the river bottom to move along. It looked easy. It was not easy.
 
 Goldie pushed the pole. The boat spun in a circle. Draghino grabbed the edge and laughed so hard they nearly fell in.
@@ -467,11 +313,7 @@ A duck watched them with what looked a lot like disapproval.
 %% --------------------------------------------------------
 %% PAGE 18 — MATHEMATICAL BRIDGE
 %% --------------------------------------------------------
-\storypageB{
-  \drawMathematicalBridge
-  \drawGoldie{3.2}{4.5}{0.55}{1}
-  \drawDraghino{4.5}{4.5}{0.55}{-1}
-}{
+\storypageB{page-18}{
 At Queens' College, they found the famous Mathematical Bridge --- a wooden bridge that curved gracefully over the river, its beams arranged in a clever pattern.
 
 ``They say this bridge was designed with brilliant mathematics!'' said Goldie, reading a sign with great excitement.
@@ -488,11 +330,7 @@ Goldie could not, in fact, prove it.
 %% --------------------------------------------------------
 %% PAGE 19 — MARKET SQUARE
 %% --------------------------------------------------------
-\storypage{
-  \drawMarketSquare
-  \drawGoldie{1.0}{0.3}{0.6}{1}
-  \drawDraghino{6.0}{0.3}{0.6}{-1}
-}{
+\storypage{page-19}{
 At the Market Square in the centre of town, they found stalls selling cakes and scarves and old books and bunches of flowers.
 
 Draghino found a scarf striped with every colour of the rainbow. ``It matches me!'' Draghino said happily, wrapping it around three times.
@@ -507,28 +345,7 @@ Goldie bought a very old book about sparkly rocks. ``This book is four hundred y
 %% --------------------------------------------------------
 %% PAGE 20 — MAKING FRIENDS
 %% --------------------------------------------------------
-\storypageB{
-  \drawCollegeCourtyard
-  \drawGoldie{2.5}{0.8}{0.65}{1}
-  \drawDraghino{5.0}{0.8}{0.65}{-1}
-  % Hedgehog
-  \fill[brown!60] (4.0, 1.2) ellipse (0.15 and 0.12);
-  \fill[brown!40] (3.88, 1.25) circle (0.06);
-  \fill[black] (3.85, 1.27) circle (0.02);
-  % Fox
-  \fill[orange!70] (6.5, 1.0) ellipse (0.2 and 0.15);
-  \fill[orange!70] (6.3, 1.1) circle (0.1);
-  \fill[white] (6.25, 1.05) circle (0.05);
-  \fill[black] (6.24, 1.08) circle (0.02);
-  \fill[orange!80] (6.2, 1.15) -- (6.13, 1.25) -- (6.18, 1.12) -- cycle;
-  \fill[orange!80] (6.25, 1.17) -- (6.22, 1.28) -- (6.28, 1.15) -- cycle;
-  % Robin
-  \fill[brown!50] (1.8, 4.6) ellipse (0.1 and 0.08);
-  \fill[red!60] (1.8, 4.55) ellipse (0.06 and 0.05);
-  \fill[brown!50] (1.72, 4.65) circle (0.05);
-  \fill[black] (1.70, 4.66) circle (0.015);
-  \fill[yellow!80!orange] (1.67, 4.64) -- (1.62, 4.63) -- (1.67, 4.62) -- cycle;
-}{
+\storypageB{page-20}{
 They met hedgehogs and foxes and robins who all lived in the college gardens.
 
 ``Welcome to Cambridge,'' said a very small hedgehog, peering up at them with shiny black eyes. ``We have been hoping for some dragons.''
@@ -543,14 +360,7 @@ Draghino immediately shook the nearest tree. Acorns rained down like hailstones.
 %% --------------------------------------------------------
 %% PAGE 21 — MISSING ROCHESTER
 %% --------------------------------------------------------
-\storypage{
-  \drawRainyWindow
-  % Dragons sitting on windowsill cushion
-  \drawGoldie{2.0}{2.5}{0.7}{1}
-  \drawDraghino{4.5}{2.5}{0.7}{-1}
-  % Thought bubble with Rochester landmarks
-  \drawThoughtBubble{5.5}{6.0}{0.7}
-}{
+\storypage{page-21}{
 Sometimes, on rainy afternoons, they missed Rochester.
 
 They missed the thunder of High Falls and the crunch of snow under their feet. They missed the Strong Museum and the taste of a garbage plate with extra hot sauce.
@@ -563,11 +373,7 @@ They missed the thunder of High Falls and the crunch of snow under their feet. T
 %% --------------------------------------------------------
 %% PAGE 22 — HOME IS WHO YOU'RE WITH
 %% --------------------------------------------------------
-\storypageB{
-  \drawParkBench
-  \drawGoldie{3.0}{2.3}{0.7}{1}
-  \drawDraghino{4.5}{2.3}{0.7}{-1}
-}{
+\storypageB{page-22}{
 One afternoon, sitting on a bench in a sunny Cambridge park, Goldie said something very wise.
 
 ``I think,'' she said slowly, ``that home is not a place you can find on a map. Home is who you are with.''
@@ -582,11 +388,7 @@ Goldie's golden belly glowed a little brighter, which is what happens when a dra
 %% --------------------------------------------------------
 %% PAGE 23 — CAMBRIDGE AT NIGHT
 %% --------------------------------------------------------
-\storypage{
-  \drawCambridgeNight
-  \drawGoldie{2.5}{2.5}{0.8}{1}
-  \drawDraghino{4.8}{2.5}{0.8}{-1}
-}{
+\storypage{page-23}{
 That night, they sat on a rooftop and watched the stars come out above Cambridge. The old city glowed golden below them, and the great chapel windows shone with warm light.
 
 ``You know,'' said Draghino, ``Rochester and Cambridge are not really so different. They both have rivers. They both have beautiful buildings. And they both have us.''
@@ -597,11 +399,7 @@ That night, they sat on a rooftop and watched the stars come out above Cambridge
 %% --------------------------------------------------------
 %% PAGE 24 — THE END
 %% --------------------------------------------------------
-\storypageB{
-  \drawCozyRoom
-  \drawGoldie{1.0}{1.5}{0.8}{1}
-  \drawDraghino{3.0}{1.5}{0.8}{-1}
-}{
+\storypageB{page-24}{
 And so two dragons from Rochester found a new home in Cambridge --- but they carried their old home with them, right in their hearts.
 
 On the wall hung a Rochester pennant and a Cambridge scarf, side by side. On the shelf sat twelve jars of hot sauce (well, eleven --- they had already used one).
